@@ -1,0 +1,315 @@
+{
+  "per_patient_zero": [
+    {
+      "patient_zero": "fam1-root",
+      "pz_position": "root",
+      "pz_generation": 0,
+      "true_blast_radius_size": 3,
+      "tracked_blast_radius_size": 3,
+      "false_negatives": [],
+      "false_positives": [],
+      "completeness": 1.0,
+      "false_negative_count": 0,
+      "query_time_ms": 0.0046,
+      "recovery": {
+        "models_in_blast_radius": 3,
+        "by_status": {
+          "patient_zero": 1,
+          "unrecoverable_by_rollback": 1,
+          "blocked_on_compromised_merge_parent": 1
+        },
+        "rollback_recoverable_fraction": 0.0
+      },
+      "false_unrecoverable": [],
+      "false_unrecoverable_count": 0,
+      "recovery_plans": [
+        {
+          "model": "fam1-root",
+          "status": "patient_zero",
+          "action": "quarantine and investigate: this is the origin",
+          "recovery_target": null,
+          "rebuild_steps": null,
+          "rebuild_cost": null
+        },
+        {
+          "model": "merge-0-35",
+          "status": "unrecoverable_by_rollback",
+          "action": "no clean signed ancestor exists: full rebuild from a trusted base required",
+          "recovery_target": null,
+          "rebuild_steps": null,
+          "rebuild_cost": "maximum: nothing upstream can be trusted"
+        },
+        {
+          "model": "merge-4-39",
+          "status": "blocked_on_compromised_merge_parent",
+          "action": "cannot rebuild yet: merge node(s) ['merge-4-39'] still have a compromised parent. Those parents must be recovered first.",
+          "recovery_target": null,
+          "rebuild_steps": null,
+          "rebuild_cost": "deferred: blocked behind another model's recovery",
+          "blocked_on_merge_parents": [
+            "merge-4-39"
+          ]
+        }
+      ]
+    },
+    {
+      "patient_zero": "fam3-g2-5",
+      "pz_position": "fine-tune",
+      "pz_generation": 2,
+      "true_blast_radius_size": 10,
+      "tracked_blast_radius_size": 5,
+      "false_negatives": [
+        "fam3-g3-6",
+        "fam3-g4-10",
+        "fam3-g4-11",
+        "fam3-g4-9",
+        "merge-4-39"
+      ],
+      "false_positives": [],
+      "completeness": 0.5,
+      "false_negative_count": 5,
+      "query_time_ms": 0.0032,
+      "recovery": {
+        "models_in_blast_radius": 5,
+        "by_status": {
+          "patient_zero": 1,
+          "unrecoverable_by_rollback": 4
+        },
+        "rollback_recoverable_fraction": 0.0
+      },
+      "false_unrecoverable": [
+        "fam3-g3-7",
+        "fam3-g3-8",
+        "lora-0-41"
+      ],
+      "false_unrecoverable_count": 3,
+      "recovery_plans": [
+        {
+          "model": "fam3-g2-5",
+          "status": "patient_zero",
+          "action": "quarantine and investigate: this is the origin",
+          "recovery_target": null,
+          "rebuild_steps": null,
+          "rebuild_cost": null
+        },
+        {
+          "model": "fam3-g3-7",
+          "status": "unrecoverable_by_rollback",
+          "action": "no clean signed ancestor exists: full rebuild from a trusted base required",
+          "recovery_target": null,
+          "rebuild_steps": null,
+          "rebuild_cost": "maximum: nothing upstream can be trusted"
+        },
+        {
+          "model": "fam3-g3-8",
+          "status": "unrecoverable_by_rollback",
+          "action": "no clean signed ancestor exists: full rebuild from a trusted base required",
+          "recovery_target": null,
+          "rebuild_steps": null,
+          "rebuild_cost": "maximum: nothing upstream can be trusted"
+        },
+        {
+          "model": "lora-0-41",
+          "status": "unrecoverable_by_rollback",
+          "action": "no clean signed ancestor exists: full rebuild from a trusted base required",
+          "recovery_target": null,
+          "rebuild_steps": null,
+          "rebuild_cost": "maximum: nothing upstream can be trusted"
+        },
+        {
+          "model": "merge-5-40",
+          "status": "unrecoverable_by_rollback",
+          "action": "no clean signed ancestor exists: full rebuild from a trusted base required",
+          "recovery_target": null,
+          "rebuild_steps": null,
+          "rebuild_cost": "maximum: nothing upstream can be trusted"
+        }
+      ]
+    },
+    {
+      "patient_zero": "fam4-g1-14",
+      "pz_position": "fine-tune",
+      "pz_generation": 1,
+      "true_blast_radius_size": 4,
+      "tracked_blast_radius_size": 4,
+      "false_negatives": [],
+      "false_positives": [],
+      "completeness": 1.0,
+      "false_negative_count": 0,
+      "query_time_ms": 0.0028,
+      "recovery": {
+        "models_in_blast_radius": 4,
+        "by_status": {
+          "patient_zero": 1,
+          "recoverable_by_rollback": 3
+        },
+        "rollback_recoverable_fraction": 1.0
+      },
+      "false_unrecoverable": [],
+      "false_unrecoverable_count": 0,
+      "recovery_plans": [
+        {
+          "model": "fam4-g1-14",
+          "status": "patient_zero",
+          "action": "quarantine and investigate: this is the origin",
+          "recovery_target": null,
+          "rebuild_steps": null,
+          "rebuild_cost": null
+        },
+        {
+          "model": "fam4-g2-18",
+          "status": "recoverable_by_rollback",
+          "action": "rebuild from fam4-root",
+          "recovery_target": "fam4-root",
+          "rebuild_steps": [
+            "fam4-root --fine-tune--> fam4-g1-14",
+            "fam4-g1-14 --fine-tune--> fam4-g2-18"
+          ],
+          "rebuild_cost": "expensive: retraining required",
+          "blocked_on_merge_parents": null
+        },
+        {
+          "model": "fam4-g3-21",
+          "status": "recoverable_by_rollback",
+          "action": "rebuild from fam4-root",
+          "recovery_target": "fam4-root",
+          "rebuild_steps": [
+            "fam4-root --fine-tune--> fam4-g1-14",
+            "fam4-g1-14 --fine-tune--> fam4-g2-18",
+            "fam4-g2-18 --fine-tune--> fam4-g3-21"
+          ],
+          "rebuild_cost": "expensive: retraining required",
+          "blocked_on_merge_parents": null
+        },
+        {
+          "model": "lora-1-42",
+          "status": "recoverable_by_rollback",
+          "action": "rebuild from fam4-root",
+          "recovery_target": "fam4-root",
+          "rebuild_steps": [
+            "fam4-root --fine-tune--> fam4-g1-14",
+            "fam4-g1-14 --fine-tune--> fam4-g2-18",
+            "fam4-g2-18 --fine-tune--> fam4-g3-21",
+            "fam4-g3-21 --compose--> lora-1-42"
+          ],
+          "rebuild_cost": "cheap: re-serve the existing adapter against a clean base, no retraining; expensive: retraining required",
+          "blocked_on_merge_parents": null
+        }
+      ]
+    },
+    {
+      "patient_zero": "fam4-g3-20",
+      "pz_position": "fine-tune",
+      "pz_generation": 3,
+      "true_blast_radius_size": 4,
+      "tracked_blast_radius_size": 2,
+      "false_negatives": [
+        "fam4-g4-24",
+        "merge-3-38"
+      ],
+      "false_positives": [],
+      "completeness": 0.5,
+      "false_negative_count": 2,
+      "query_time_ms": 0.002,
+      "recovery": {
+        "models_in_blast_radius": 2,
+        "by_status": {
+          "patient_zero": 1,
+          "recoverable_by_rollback": 1
+        },
+        "rollback_recoverable_fraction": 1.0
+      },
+      "false_unrecoverable": [],
+      "false_unrecoverable_count": 0,
+      "recovery_plans": [
+        {
+          "model": "fam4-g3-20",
+          "status": "patient_zero",
+          "action": "quarantine and investigate: this is the origin",
+          "recovery_target": null,
+          "rebuild_steps": null,
+          "rebuild_cost": null
+        },
+        {
+          "model": "fam4-g4-25",
+          "status": "recoverable_by_rollback",
+          "action": "rebuild from fam4-g2-17",
+          "recovery_target": "fam4-g2-17",
+          "rebuild_steps": [
+            "fam4-g2-17 --fine-tune--> fam4-g3-20",
+            "fam4-g3-20 --fine-tune--> fam4-g4-25"
+          ],
+          "rebuild_cost": "expensive: retraining required",
+          "blocked_on_merge_parents": null
+        }
+      ]
+    },
+    {
+      "patient_zero": "fam6-root",
+      "pz_position": "root",
+      "pz_generation": 0,
+      "true_blast_radius_size": 2,
+      "tracked_blast_radius_size": 2,
+      "false_negatives": [],
+      "false_positives": [],
+      "completeness": 1.0,
+      "false_negative_count": 0,
+      "query_time_ms": 0.002,
+      "recovery": {
+        "models_in_blast_radius": 2,
+        "by_status": {
+          "patient_zero": 1,
+          "blocked_on_compromised_merge_parent": 1
+        },
+        "rollback_recoverable_fraction": 0.0
+      },
+      "false_unrecoverable": [],
+      "false_unrecoverable_count": 0,
+      "recovery_plans": [
+        {
+          "model": "fam6-root",
+          "status": "patient_zero",
+          "action": "quarantine and investigate: this is the origin",
+          "recovery_target": null,
+          "rebuild_steps": null,
+          "rebuild_cost": null
+        },
+        {
+          "model": "merge-2-37",
+          "status": "blocked_on_compromised_merge_parent",
+          "action": "cannot rebuild yet: merge node(s) ['merge-2-37'] still have a compromised parent. Those parents must be recovered first.",
+          "recovery_target": null,
+          "rebuild_steps": null,
+          "rebuild_cost": "deferred: blocked behind another model's recovery",
+          "blocked_on_merge_parents": [
+            "merge-2-37"
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "n_patient_zeros_evaluated": 5,
+    "average_completeness": 0.8,
+    "total_true_affected_models": 23,
+    "total_false_negatives": 7,
+    "total_false_positives": 0,
+    "overall_recall": 0.6957,
+    "average_query_time_ms": 0.0029,
+    "recovery_by_pz_position": {
+      "root": {
+        "patient_zeros": 2,
+        "recoverable": 0,
+        "unrecoverable": 1,
+        "blocked": 2
+      },
+      "mid-chain": {
+        "patient_zeros": 3,
+        "recoverable": 4,
+        "unrecoverable": 4,
+        "blocked": 0
+      }
+    },
+    "total_false_unrecoverable": 3
+  }
+}

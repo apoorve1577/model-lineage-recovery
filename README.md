@@ -19,9 +19,10 @@ and what can actually be done about each one.
 > **Motivating case.** In December 2023 the Stanford Internet Observatory found
 > validated CSAM in LAION-5B and recommended that Stable Diffusion 1.5 models
 > without safety measures applied be deprecated and their distribution ceased
-> where feasible. That recommendation was largely unactionable: no queryable graph
-> connected the dataset to its derivatives. The query was never the hard part.
-> The graph did not exist.
+> where feasible. Acting on that was largely impractical: curated efforts such as
+> Ecosystem Graphs do link assets across organisations, but at organisation and
+> product granularity rather than by content hash, with no coverage guarantee
+> and no recovery planning. The query was never the hard part.
 ## What it does
 
 1. Builds a lineage DAG of model artifacts with typed edges (`fine-tune`, `quantize`, `merge`, `compose`)
@@ -79,8 +80,9 @@ verdicts.
 `recovery_plan(..., strict=True)` also treats the rebuild path's own parent as
 blocking, under which a `recoverable` verdict is provably correct. It costs
 precision: 3.2% of its `blocked` verdicts have every off-path parent clean.
-The precise rule gives that guarantee up and turns out to be safe anyway on
-these graphs.
+Giving the guarantee up admits additional plans: 47 to 97 extra recoverable
+verdicts per condition, of which one per condition reused an unrepaired
+affected input. Small, but not zero.
 
 **Rollback targets are always safe, under either setting.** Whatever the
 planner proposes as a rollback target lies outside the *true* blast radius,
@@ -95,8 +97,10 @@ CI [0.52, 0.88]), because the population receiving any verdict collapses from
 
 **The error is structurally confined.** Root patient zeros supply about
 two-thirds of the verdict denominator (70% at p=0, 58% at p=0.50) and cannot
-produce this error at all — no clean ancestor exists above a root, so
-`unrecoverable` is simply true. Pooling dilutes the rate roughly threefold.
+produce this error at all. Not because their descendants lack clean ancestors —
+one on another merge branch can make a descendant `blocked` — but because a
+`recoverable` verdict would require a target that is an ancestor of the root,
+and a root has none. Pooling dilutes the rate roughly threefold.
 
 **Edge cost is zero-inflated, not bimodal.** Every edge type has one mode at
 zero and a decreasing tail. Separating the two effects: multi-parent and
@@ -146,18 +150,23 @@ fixed them.
 ## Running it
 
 ```
-python3 -m venv .venv
-./.venv/bin/pip install networkx
-./.venv/bin/python generate_dataset.py
-./.venv/bin/python evaluate.py   # the worked case  -> results/evaluation.json
-./.venv/bin/python sweep.py      # the statistics   -> results/sweep.json
+python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt
+./.venv/bin/python generate_dataset.py   # -> data/{true,tracked}_lineage.json
+./.venv/bin/python evaluate.py           # worked case -> results/evaluation.json
+./.venv/bin/python sweep.py              # statistics  -> results/sweep.json
+./.venv/bin/python make_figures.py       # -> figures/*.pdf, *.png, plotted.json
+./.venv/bin/python check_readme.py       # every number here, against the results
 ```
+
+Tested on Python 3.12 with networkx 3.x and matplotlib 3.x, macOS,
+September 2026.
 
 ### Reproduction
 
-`data/*.json` and `results/sweep.json` regenerate byte-identically; everything
-is seeded. `results/evaluation.json` differs only in its `query_time_ms`
-fields, which are wall-clock measurements. All substantive values match.
+Everything is seeded. `data/*.json`, `results/sweep.json`, and all four figure
+files regenerate byte-identically. `results/evaluation.json` differs only in
+its `query_time_ms` fields, which are wall-clock measurements; every
+substantive value matches.
 
 ## Files
 

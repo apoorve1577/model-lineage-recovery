@@ -19,7 +19,7 @@
       "false_positives": [],
       "completeness": 0.4286,
       "false_negative_count": 8,
-      "query_time_ms": 0.0058,
+      "query_time_ms": 0.0055,
       "recovery": {
         "models_in_blast_radius": 6,
         "by_status": {
@@ -33,6 +33,8 @@
       "false_unrecoverable_count": 0,
       "false_recoverable": [],
       "false_recoverable_count": 0,
+      "unsafe_plan_count": 0,
+      "unsafe_plans": [],
       "false_recoverable_count_strict": 0,
       "strict_blocked_relaxable_count": 0,
       "strict_blocked_total": 1,
@@ -82,13 +84,17 @@
         {
           "model": "merge-g1-16",
           "status": "blocked_on_compromised_merge_parent",
-          "action": "cannot rebuild yet: merge node(s) ['merge-g1-16'] have a compromised parent that this plan does not rebuild. Those parents must be recovered first.",
+          "action": "cannot rebuild yet: merge-g1-16 has compromised parent fam3-root, which this plan does not rebuild. Those parents must be recovered first.",
           "recovery_target": null,
           "rebuild_steps": null,
           "rebuild_cost": "deferred: blocked behind another model's recovery",
-          "blocked_on_merge_parents": [
+          "blocking_parents": [
+            "fam3-root"
+          ],
+          "blocked_merge_nodes": [
             "merge-g1-16"
-          ]
+          ],
+          "blocked_by_policy_only": false
         }
       ]
     },
@@ -110,7 +116,7 @@
       "false_positives": [],
       "completeness": 0.6316,
       "false_negative_count": 7,
-      "query_time_ms": 0.0051,
+      "query_time_ms": 0.005,
       "recovery": {
         "models_in_blast_radius": 12,
         "by_status": {
@@ -123,6 +129,8 @@
       "false_unrecoverable_count": 0,
       "false_recoverable": [],
       "false_recoverable_count": 0,
+      "unsafe_plan_count": 0,
+      "unsafe_plans": [],
       "false_recoverable_count_strict": 0,
       "strict_blocked_relaxable_count": 0,
       "strict_blocked_total": 0,
@@ -228,141 +236,6 @@
       ]
     },
     {
-      "patient_zero": "lora-g1-19",
-      "pz_position": "compose",
-      "pz_generation": 1,
-      "true_blast_radius_size": 12,
-      "tracked_blast_radius_size": 8,
-      "false_negatives": [
-        "fam5-g3-64",
-        "fam5-g3-67",
-        "fam5-g4-102",
-        "fam5-g4-103"
-      ],
-      "false_positives": [],
-      "completeness": 0.6667,
-      "false_negative_count": 4,
-      "query_time_ms": 0.0039,
-      "recovery": {
-        "models_in_blast_radius": 8,
-        "by_status": {
-          "recoverable_by_rollback": 7,
-          "patient_zero": 1
-        },
-        "rollback_recoverable_fraction": 1.0
-      },
-      "false_unrecoverable": [],
-      "false_unrecoverable_count": 0,
-      "false_recoverable": [],
-      "false_recoverable_count": 0,
-      "false_recoverable_count_strict": 0,
-      "strict_blocked_relaxable_count": 0,
-      "strict_blocked_total": 0,
-      "unsound_targets": [],
-      "unsound_target_count": 0,
-      "recovery_plans": [
-        {
-          "model": "fam5-g2-37",
-          "status": "recoverable_by_rollback",
-          "action": "rebuild from fam5-root",
-          "recovery_target": "fam5-root",
-          "rebuild_steps": [
-            "fam5-root --compose--> lora-g1-19",
-            "lora-g1-19 --fine-tune--> fam5-g2-37"
-          ],
-          "rebuild_cost": "cheap: re-serve the existing adapter against a clean base, no retraining; expensive: retraining required",
-          "blocked_on_merge_parents": null
-        },
-        {
-          "model": "fam5-g2-38",
-          "status": "recoverable_by_rollback",
-          "action": "rebuild from fam5-root",
-          "recovery_target": "fam5-root",
-          "rebuild_steps": [
-            "fam5-root --compose--> lora-g1-19",
-            "lora-g1-19 --fine-tune--> fam5-g2-38"
-          ],
-          "rebuild_cost": "cheap: re-serve the existing adapter against a clean base, no retraining; expensive: retraining required",
-          "blocked_on_merge_parents": null
-        },
-        {
-          "model": "fam5-g3-63",
-          "status": "recoverable_by_rollback",
-          "action": "rebuild from fam5-root",
-          "recovery_target": "fam5-root",
-          "rebuild_steps": [
-            "fam5-root --compose--> lora-g1-19",
-            "lora-g1-19 --fine-tune--> fam5-g2-37",
-            "fam5-g2-37 --fine-tune--> fam5-g3-63"
-          ],
-          "rebuild_cost": "cheap: re-serve the existing adapter against a clean base, no retraining; expensive: retraining required",
-          "blocked_on_merge_parents": null
-        },
-        {
-          "model": "fam5-g3-65",
-          "status": "recoverable_by_rollback",
-          "action": "rebuild from fam5-root",
-          "recovery_target": "fam5-root",
-          "rebuild_steps": [
-            "fam5-root --compose--> lora-g1-19",
-            "lora-g1-19 --fine-tune--> fam5-g2-38",
-            "fam5-g2-38 --quantize--> fam5-g3-65"
-          ],
-          "rebuild_cost": "cheap: re-derive deterministically from clean parent; cheap: re-serve the existing adapter against a clean base, no retraining; expensive: retraining required",
-          "blocked_on_merge_parents": null
-        },
-        {
-          "model": "fam5-g3-66",
-          "status": "recoverable_by_rollback",
-          "action": "rebuild from fam5-root",
-          "recovery_target": "fam5-root",
-          "rebuild_steps": [
-            "fam5-root --compose--> lora-g1-19",
-            "lora-g1-19 --fine-tune--> fam5-g2-38",
-            "fam5-g2-38 --fine-tune--> fam5-g3-66"
-          ],
-          "rebuild_cost": "cheap: re-serve the existing adapter against a clean base, no retraining; expensive: retraining required",
-          "blocked_on_merge_parents": null
-        },
-        {
-          "model": "fam5-g4-101",
-          "status": "recoverable_by_rollback",
-          "action": "rebuild from fam5-root",
-          "recovery_target": "fam5-root",
-          "rebuild_steps": [
-            "fam5-root --compose--> lora-g1-19",
-            "lora-g1-19 --fine-tune--> fam5-g2-37",
-            "fam5-g2-37 --fine-tune--> fam5-g3-63",
-            "fam5-g3-63 --quantize--> fam5-g4-101"
-          ],
-          "rebuild_cost": "cheap: re-derive deterministically from clean parent; cheap: re-serve the existing adapter against a clean base, no retraining; expensive: retraining required",
-          "blocked_on_merge_parents": null
-        },
-        {
-          "model": "fam5-g4-104",
-          "status": "recoverable_by_rollback",
-          "action": "rebuild from fam5-root",
-          "recovery_target": "fam5-root",
-          "rebuild_steps": [
-            "fam5-root --compose--> lora-g1-19",
-            "lora-g1-19 --fine-tune--> fam5-g2-38",
-            "fam5-g2-38 --quantize--> fam5-g3-65",
-            "fam5-g3-65 --fine-tune--> fam5-g4-104"
-          ],
-          "rebuild_cost": "cheap: re-derive deterministically from clean parent; cheap: re-serve the existing adapter against a clean base, no retraining; expensive: retraining required",
-          "blocked_on_merge_parents": null
-        },
-        {
-          "model": "lora-g1-19",
-          "status": "patient_zero",
-          "action": "quarantine and investigate: this is the origin",
-          "recovery_target": null,
-          "rebuild_steps": null,
-          "rebuild_cost": null
-        }
-      ]
-    },
-    {
       "patient_zero": "fam1-g2-20",
       "pz_position": "quantize",
       "pz_generation": 2,
@@ -375,7 +248,7 @@
       "false_positives": [],
       "completeness": 0.6,
       "false_negative_count": 2,
-      "query_time_ms": 0.0024,
+      "query_time_ms": 0.0025,
       "recovery": {
         "models_in_blast_radius": 3,
         "by_status": {
@@ -388,6 +261,8 @@
       "false_unrecoverable_count": 0,
       "false_recoverable": [],
       "false_recoverable_count": 0,
+      "unsafe_plan_count": 0,
+      "unsafe_plans": [],
       "false_recoverable_count_strict": 0,
       "strict_blocked_relaxable_count": 0,
       "strict_blocked_total": 0,
@@ -411,8 +286,10 @@
             "fam1-g1-7 --quantize--> fam1-g2-20",
             "fam1-g2-20 --fine-tune--> fam1-g3-43"
           ],
-          "rebuild_cost": "cheap: re-derive deterministically from clean parent; expensive: retraining required",
-          "blocked_on_merge_parents": null
+          "rebuild_cost": "cheap: re-derive from a clean parent; determinism depends on method, configuration and environment; expensive: retraining required",
+          "blocking_parents": null,
+          "blocked_merge_nodes": null,
+          "blocked_by_policy_only": false
         },
         {
           "model": "fam1-g3-44",
@@ -424,36 +301,37 @@
             "fam1-g2-20 --quantize--> fam1-g3-44"
           ],
           "rebuild_cost": "cheap: no retraining required, only replay or re-composition",
-          "blocked_on_merge_parents": null
+          "blocking_parents": null,
+          "blocked_merge_nodes": null,
+          "blocked_by_policy_only": false
         }
       ]
     },
     {
-      "patient_zero": "fam6-g2-34",
-      "pz_position": "quantize",
+      "patient_zero": "fam1-g2-21",
+      "pz_position": "fine-tune",
       "pz_generation": 2,
-      "true_blast_radius_size": 3,
-      "tracked_blast_radius_size": 3,
+      "true_blast_radius_size": 5,
+      "tracked_blast_radius_size": 5,
       "false_negatives": [],
       "false_positives": [],
       "completeness": 1.0,
       "false_negative_count": 0,
-      "query_time_ms": 0.0024,
+      "query_time_ms": 0.0028,
       "recovery": {
-        "models_in_blast_radius": 3,
+        "models_in_blast_radius": 5,
         "by_status": {
           "patient_zero": 1,
-          "unrecoverable_by_rollback": 2
+          "recoverable_by_rollback": 4
         },
-        "rollback_recoverable_fraction": 0.0
+        "rollback_recoverable_fraction": 1.0
       },
-      "false_unrecoverable": [
-        "fam6-g3-61",
-        "fam6-g4-100"
-      ],
-      "false_unrecoverable_count": 2,
+      "false_unrecoverable": [],
+      "false_unrecoverable_count": 0,
       "false_recoverable": [],
       "false_recoverable_count": 0,
+      "unsafe_plan_count": 0,
+      "unsafe_plans": [],
       "false_recoverable_count_strict": 0,
       "strict_blocked_relaxable_count": 0,
       "strict_blocked_total": 0,
@@ -461,7 +339,7 @@
       "unsound_target_count": 0,
       "recovery_plans": [
         {
-          "model": "fam6-g2-34",
+          "model": "fam1-g2-21",
           "status": "patient_zero",
           "action": "quarantine and investigate: this is the origin",
           "recovery_target": null,
@@ -469,32 +347,148 @@
           "rebuild_cost": null
         },
         {
-          "model": "fam6-g3-61",
-          "status": "unrecoverable_by_rollback",
-          "action": "no clean signed ancestor exists: full rebuild from a trusted base required",
-          "recovery_target": null,
-          "rebuild_steps": null,
-          "rebuild_cost": "maximum: nothing upstream can be trusted"
+          "model": "fam1-g3-45",
+          "status": "recoverable_by_rollback",
+          "action": "rebuild from fam1-g1-7",
+          "recovery_target": "fam1-g1-7",
+          "rebuild_steps": [
+            "fam1-g1-7 --fine-tune--> fam1-g2-21",
+            "fam1-g2-21 --fine-tune--> fam1-g3-45"
+          ],
+          "rebuild_cost": "expensive: retraining required",
+          "blocking_parents": null,
+          "blocked_merge_nodes": null,
+          "blocked_by_policy_only": false
         },
         {
-          "model": "fam6-g4-100",
-          "status": "unrecoverable_by_rollback",
-          "action": "no clean signed ancestor exists: full rebuild from a trusted base required",
+          "model": "fam1-g3-46",
+          "status": "recoverable_by_rollback",
+          "action": "rebuild from fam1-g1-7",
+          "recovery_target": "fam1-g1-7",
+          "rebuild_steps": [
+            "fam1-g1-7 --fine-tune--> fam1-g2-21",
+            "fam1-g2-21 --fine-tune--> fam1-g3-46"
+          ],
+          "rebuild_cost": "expensive: retraining required",
+          "blocking_parents": null,
+          "blocked_merge_nodes": null,
+          "blocked_by_policy_only": false
+        },
+        {
+          "model": "fam1-g4-76",
+          "status": "recoverable_by_rollback",
+          "action": "rebuild from fam1-g1-7",
+          "recovery_target": "fam1-g1-7",
+          "rebuild_steps": [
+            "fam1-g1-7 --fine-tune--> fam1-g2-21",
+            "fam1-g2-21 --fine-tune--> fam1-g3-46",
+            "fam1-g3-46 --fine-tune--> fam1-g4-76"
+          ],
+          "rebuild_cost": "expensive: retraining required",
+          "blocking_parents": null,
+          "blocked_merge_nodes": null,
+          "blocked_by_policy_only": false
+        },
+        {
+          "model": "fam1-g4-77",
+          "status": "recoverable_by_rollback",
+          "action": "rebuild from fam1-g1-7",
+          "recovery_target": "fam1-g1-7",
+          "rebuild_steps": [
+            "fam1-g1-7 --fine-tune--> fam1-g2-21",
+            "fam1-g2-21 --fine-tune--> fam1-g3-46",
+            "fam1-g3-46 --fine-tune--> fam1-g4-77"
+          ],
+          "rebuild_cost": "expensive: retraining required",
+          "blocking_parents": null,
+          "blocked_merge_nodes": null,
+          "blocked_by_policy_only": false
+        }
+      ]
+    },
+    {
+      "patient_zero": "fam5-g2-37",
+      "pz_position": "fine-tune",
+      "pz_generation": 2,
+      "true_blast_radius_size": 6,
+      "tracked_blast_radius_size": 3,
+      "false_negatives": [
+        "fam5-g3-64",
+        "fam5-g4-102",
+        "fam5-g4-103"
+      ],
+      "false_positives": [],
+      "completeness": 0.5,
+      "false_negative_count": 3,
+      "query_time_ms": 0.0025,
+      "recovery": {
+        "models_in_blast_radius": 3,
+        "by_status": {
+          "patient_zero": 1,
+          "recoverable_by_rollback": 2
+        },
+        "rollback_recoverable_fraction": 1.0
+      },
+      "false_unrecoverable": [],
+      "false_unrecoverable_count": 0,
+      "false_recoverable": [],
+      "false_recoverable_count": 0,
+      "unsafe_plan_count": 0,
+      "unsafe_plans": [],
+      "false_recoverable_count_strict": 0,
+      "strict_blocked_relaxable_count": 0,
+      "strict_blocked_total": 0,
+      "unsound_targets": [],
+      "unsound_target_count": 0,
+      "recovery_plans": [
+        {
+          "model": "fam5-g2-37",
+          "status": "patient_zero",
+          "action": "quarantine and investigate: this is the origin",
           "recovery_target": null,
           "rebuild_steps": null,
-          "rebuild_cost": "maximum: nothing upstream can be trusted"
+          "rebuild_cost": null
+        },
+        {
+          "model": "fam5-g3-63",
+          "status": "recoverable_by_rollback",
+          "action": "rebuild from lora-g1-19",
+          "recovery_target": "lora-g1-19",
+          "rebuild_steps": [
+            "lora-g1-19 --fine-tune--> fam5-g2-37",
+            "fam5-g2-37 --fine-tune--> fam5-g3-63"
+          ],
+          "rebuild_cost": "expensive: retraining required",
+          "blocking_parents": null,
+          "blocked_merge_nodes": null,
+          "blocked_by_policy_only": false
+        },
+        {
+          "model": "fam5-g4-101",
+          "status": "recoverable_by_rollback",
+          "action": "rebuild from lora-g1-19",
+          "recovery_target": "lora-g1-19",
+          "rebuild_steps": [
+            "lora-g1-19 --fine-tune--> fam5-g2-37",
+            "fam5-g2-37 --fine-tune--> fam5-g3-63",
+            "fam5-g3-63 --quantize--> fam5-g4-101"
+          ],
+          "rebuild_cost": "cheap: re-derive from a clean parent; determinism depends on method, configuration and environment; expensive: retraining required",
+          "blocking_parents": null,
+          "blocked_merge_nodes": null,
+          "blocked_by_policy_only": false
         }
       ]
     }
   ],
   "summary": {
     "n_patient_zeros_evaluated": 5,
-    "average_completeness": 0.6654,
-    "total_true_affected_models": 53,
-    "total_false_negatives": 21,
+    "average_completeness": 0.632,
+    "total_true_affected_models": 49,
+    "total_false_negatives": 20,
     "total_false_positives": 0,
-    "overall_recall": 0.6038,
-    "average_query_time_ms": 0.0039,
+    "overall_recall": 0.5918,
+    "average_query_time_ms": 0.0037,
     "recovery_by_pz_position": {
       "root": {
         "patient_zeros": 2,
@@ -504,13 +498,14 @@
       },
       "mid-chain": {
         "patient_zeros": 3,
-        "recoverable": 9,
-        "unrecoverable": 2,
+        "recoverable": 8,
+        "unrecoverable": 0,
         "blocked": 0
       }
     },
-    "total_false_unrecoverable": 2,
+    "total_false_unrecoverable": 0,
     "total_false_recoverable": 0,
+    "total_unsafe_plans": 0,
     "total_false_recoverable_strict": 0,
     "total_unsound_targets": 0
   }

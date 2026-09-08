@@ -81,13 +81,18 @@ def evaluate_graphs(true_graph, tracked_graph):
             if bad:
                 unsafe_plans.append(pl["model"])
 
-        # Disagreement with a full-graph planner's independently selected
-        # plan. NOT an unsafety measure: unsafe_plans above is that. The tracked graph
-        # says a model can be rolled back; the truth is that it cannot, because
-        # an edge that would have revealed a compromised merge parent, or the
-        # compromise of the target itself, was never recorded. Acting on this
-        # verdict reintroduces the compromise. The previous generator made it
-        # unobservable by construction, since merges had no descendants.
+        # Disagreement with a full-graph planner's independently selected plan.
+        # NOT an unsafety measure: unsafe_plans above is that.
+        #
+        # The two planners choose targets independently, so restoring a hidden
+        # edge can send the full-graph planner to a nearer target whose plan
+        # happens to be blocked. That says nothing about the plan actually
+        # proposed. A four-node case: clean signed roots r and c, compromised
+        # fine-tune z of r, merge m of z and c, with only c->m hidden. The
+        # tracked plan rebuilds z from r and re-merges with clean c, which is
+        # correct; the full-graph planner picks c and blocks. Disagreement, not
+        # danger. Nor can the target itself be compromised: that is excluded by
+        # the rollback-target soundness proposition.
         false_recoverable = [
             p["model"] for p in plans
             if p["status"] == "recoverable_by_rollback"
@@ -161,6 +166,26 @@ def evaluate_graphs(true_graph, tracked_graph):
 
 def summarize(results):
     n = len(results)
+    if n == 0:
+        # The generator can produce this when both patient-zero counts are zero.
+        # Averaging over an empty incident set is undefined, so say so rather
+        # than raising ZeroDivisionError from inside a summary.
+        return {
+            "n_patient_zeros_evaluated": 0,
+            "average_completeness": None,
+            "total_true_affected_models": 0,
+            "total_false_negatives": 0,
+            "total_false_positives": 0,
+            "overall_recall": None,
+            "average_query_time_ms": None,
+            "recovery_by_pz_position": {},
+            "total_false_unrecoverable": 0,
+            "total_false_recoverable": 0,
+            "total_false_recoverable_strict": 0,
+            "total_unsafe_plans": 0,
+            "total_unsound_targets": 0,
+            "note": "no incidents in this dataset; averages are undefined",
+        }
     total_true = sum(r["true_blast_radius_size"] for r in results)
     total_fn = sum(r["false_negative_count"] for r in results)
     total_fp = sum(len(r["false_positives"]) for r in results)

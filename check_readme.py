@@ -16,7 +16,7 @@ HERE = pathlib.Path(__file__).parent
 # values deliberately quoted as superseded. Keep minimal -- whitelisting a
 # superseded value beside its replacement means a stale number can never fail.
 KNOWN = {
-    '0.3', '1.5', '2.0', '13',      # licence version, SD 1.5, hop count, runtime
+    '0.3', '1.5', '2.0', '13', '3.12',   # licence, SD 1.5, hops, runtime, Python
     '2.8',                          # quoted as superseded in the correction note
     '5', '15', '30', '50', '0',     # drop rates named in prose
     '95',                           # "95% confidence intervals"

@@ -100,33 +100,56 @@ def recovery_plan(graph, patient_zero, affected, strict=False):
         # inside a blast radius. That makes the classifier conservative: it
         # blocks work that could in fact proceed, in exchange for a provable
         # guarantee that a `recoverable` verdict is never wrong (a path with no
-        # merge-typed node inside the blast radius has in-degree 1 throughout,
-        # so the true planner walks the same path and returns the same answer).
+        # merge-typed vertex inside the blast radius has a unique true parent,
+        # so the true planner reaches the same verdict -- though not
+        # necessarily via the same target, since restoring hidden edges can
+        # reveal a nearer one. Only the verdict is preserved.)
         # The precision cost is real - at 15% untracked edges, 3.2% of strict
         # `blocked` verdicts have every off-path parent clean - so the two
         # settings trade precision against provability rather than one
         # dominating the other.
-        blocked_merges = [
-            child for parent_on_path, child, op in path
-            if op == "merge" and any(
-                p in affected and (strict or p != parent_on_path)
-                for p in graph.predecessors(child)
-            )
-        ]
+        # Report the blocking PARENTS, not the merge children. Under the
+        # precise rule the blocking parent is genuinely outside the work this
+        # plan does; under the conservative rule it may be the path-parent,
+        # which this plan would in fact repair, and the two cases need
+        # different explanations. An earlier version emitted the merge child
+        # ids in a field named for parents, and gave the precise rule's
+        # explanation for both policies.
+        blocked = []          # (merge_child, blocking_parent, on_path)
+        for parent_on_path, child, op in path:
+            if op != "merge":
+                continue
+            for par in graph.predecessors(child):
+                if par in affected and (strict or par != parent_on_path):
+                    blocked.append((child, par, par == parent_on_path))
 
-        if blocked_merges:
+        if blocked:
+            off_path = [(c, par) for c, par, on in blocked if not on]
+            if off_path:
+                action = (
+                    "cannot rebuild yet: "
+                    + "; ".join(f"{c} has compromised parent {par}, which this "
+                                f"plan does not rebuild" for c, par in off_path)
+                    + ". Those parents must be recovered first."
+                )
+            else:
+                action = (
+                    "deferred by the conservative policy: "
+                    + "; ".join(f"{c} lies on the rebuild path and has an "
+                                f"affected parent {par}" for c, par, _ in blocked)
+                    + ". The precise policy would rebuild that parent as part "
+                      "of this plan; the conservative policy defers instead."
+                )
             plans.append({
                 "model": model_id,
                 "status": "blocked_on_compromised_merge_parent",
-                "action": (
-                    f"cannot rebuild yet: merge node(s) {blocked_merges} have a "
-                    f"compromised parent that this plan does not rebuild. "
-                    f"Those parents must be recovered first."
-                ),
+                "action": action,
                 "recovery_target": None,
                 "rebuild_steps": None,
                 "rebuild_cost": "deferred: blocked behind another model's recovery",
-                "blocked_on_merge_parents": blocked_merges,
+                "blocking_parents": sorted({par for _, par, _ in blocked}),
+                "blocked_merge_nodes": sorted({c for c, _, _ in blocked}),
+                "blocked_by_policy_only": not off_path,
             })
             continue
 
@@ -141,7 +164,9 @@ def recovery_plan(graph, patient_zero, affected, strict=False):
                 if all_cheap else
                 "; ".join(sorted({REBUILD_COST.get(op, op) for op in ops}))
             ),
-            "blocked_on_merge_parents": None,
+            "blocking_parents": None,
+            "blocked_merge_nodes": None,
+            "blocked_by_policy_only": False,
         })
 
     return plans

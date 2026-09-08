@@ -7,9 +7,11 @@ comfortably clear of the >=8 / >=15 floors, and both >= 3:1 against the
 surface. Every series is direct-labelled as well as legended, so identity
 never rests on colour alone -- which matters because these are printed.
 
-Figure 2 uses emphasis rather than four categorical hues: the finding is a
-binary one (single-parent derivations are cut points, multi-parent ones are
-not), so colour carries that distinction and nothing else.
+Figure 2 is two panels sharing a category axis rather than one chart with two
+scales: "artifacts lost" and "% costing nothing" are different units, and a
+second y-axis would be the single most misread thing in a chart. It uses one
+hue throughout, because the finding is no longer a clean binary and colouring
+it as one would assert a grouping the data does not support.
 """
 import json
 import matplotlib
@@ -35,11 +37,12 @@ def fig_degradation(path="figures/degradation.pdf"):
     rows = d["drop_rate_sweep"]
     x = [r["drop_p"] * 100 for r in rows]
     recall = [r["recall_mean"] for r in rows]
-    r_lo = [r["recall_ci95"][0] for r in rows]
-    r_hi = [r["recall_ci95"][1] for r in rows]
-    fu = [r["false_unrecoverable_rate_mean"] for r in rows]
-    f_lo = [r["false_unrecoverable_rate_ci95"][0] for r in rows]
-    f_hi = [r["false_unrecoverable_rate_ci95"][1] for r in rows]
+    h = [r["recall_ci95_halfwidth"] for r in rows]
+    r_lo = [a - b for a, b in zip(recall, h)]
+    r_hi = [a + b for a, b in zip(recall, h)]
+    fu = [r["false_unrecoverable_rate_pooled"] for r in rows]
+    fu_mid = [r["by_pz_position"]["mid-chain"]["fu_rate"] or 0.0 for r in rows]
+    f_lo = f_hi = None
 
     fig, ax = plt.subplots(figsize=(3.35, 2.5))
     ax.set_axisbelow(True)
@@ -52,19 +55,23 @@ def fig_degradation(path="figures/degradation.pdf"):
             markeredgecolor="white", markeredgewidth=0.5,
             label="Blast-radius recall")
 
-    ax.fill_between(x, f_lo, f_hi, color=ORANGE, alpha=0.16, linewidth=0)
-    ax.plot(x, fu, color=ORANGE, linewidth=2, marker="o", markersize=3.2,
+    ax.plot(x, fu_mid, color=ORANGE, linewidth=2, marker="o", markersize=3.2,
             markeredgecolor="white", markeredgewidth=0.5,
             label="False-unrecoverable rate")
+    # Pooled across both patient-zero positions, shown dashed: root patient
+    # zeros cannot produce this error yet make up half the denominator, so
+    # the pooled figure understates it wherever it can actually occur.
+    ax.plot(x, fu, color=ORANGE, linewidth=1.2, linestyle=(0, (3, 2)),
+            label="  (pooled over all positions)")
 
     # Direct labels, so identity survives greyscale printing. Placed mid-curve
     # in clear space rather than at the endpoints, which collide with the
     # legend and, for the rising series, with the line itself.
-    i_r, i_f = 3, 6
-    ax.annotate("recall", (x[i_r], recall[i_r]), xytext=(0, 8),
+    ax.annotate("recall", (x[3], recall[3]), xytext=(0, 8),
                 textcoords="offset points", ha="center", color=INK_2, fontsize=7)
-    ax.annotate("false unrecoverable", (x[i_f], fu[i_f]), xytext=(0, 8),
-                textcoords="offset points", ha="center", color=INK_2, fontsize=7)
+    ax.annotate("false unrecoverable\n(mid-chain)", (x[6], fu_mid[6]),
+                xytext=(-4, 6), textcoords="offset points", ha="right",
+                color=INK_2, fontsize=6.5, linespacing=1.15)
 
     ax.set_xlabel("Untracked lineage edges (%)")
     ax.set_ylabel("Proportion")
@@ -82,35 +89,33 @@ def fig_criticality(path="figures/criticality.pdf"):
                   key=lambda r: r["mean_models_lost_per_missing_edge"])
     labels = [r["edge_type"] for r in rows]
     vals = [r["mean_models_lost_per_missing_edge"] for r in rows]
-    err = [[v - r["ci95"][0] for v, r in zip(vals, rows)],
-           [r["ci95"][1] - v for v, r in zip(vals, rows)]]
-    # Emphasis, not four hues: the finding is cut point vs not.
-    colors = [BLUE if r["is_cut_point"] else MUTED for r in rows]
+    err = [r["ci95_halfwidth"] for r in rows]
+    free = [100 * r["fraction_costing_nothing"] for r in rows]
 
-    fig, ax = plt.subplots(figsize=(3.35, 1.95))
-    ax.set_axisbelow(True)
-    ax.xaxis.grid(True, color=GRID, linewidth=0.6)
-    for s in ("top", "right", "left"):
-        ax.spines[s].set_visible(False)
-
+    fig, axes = plt.subplots(1, 2, figsize=(3.35, 1.9), sharey=True,
+                             gridspec_kw={"wspace": 0.12})
     y = range(len(rows))
-    ax.barh(y, vals, height=0.62, color=colors,
-            xerr=err, error_kw={"ecolor": INK_2, "elinewidth": 0.9,
-                                "capsize": 2.2, "capthick": 0.9})
-    ax.set_yticks(list(y))
-    ax.set_yticklabels([f"{l}" for l in labels], fontfamily="monospace")
 
-    for i, (v, r) in enumerate(zip(vals, rows)):
-        ax.text(r["ci95"][1] + 0.06, i, f"{v:.2f}", va="center",
-                color=INK_2, fontsize=7)
+    for ax in axes:
+        ax.set_axisbelow(True)
+        ax.xaxis.grid(True, color=GRID, linewidth=0.6)
+        for sp in ("top", "right", "left"):
+            ax.spines[sp].set_visible(False)
 
-    ax.set_xlabel("Models lost per missing edge (95% CI)")
-    ax.set_xlim(0, 1.85)
-    # Legend by patch, since colour here encodes a property not a series.
-    from matplotlib.patches import Patch
-    ax.legend(handles=[Patch(facecolor=BLUE, label="cut point (single parent)"),
-                       Patch(facecolor=MUTED, label="redundant (leaf or merge)")],
-              frameon=False, loc="lower right", fontsize=6.5, handlelength=1.2)
+    axes[0].barh(y, vals, height=0.6, color=BLUE, xerr=err,
+                 error_kw={"ecolor": INK_2, "elinewidth": 0.9,
+                           "capsize": 2.0, "capthick": 0.9})
+    axes[0].set_yticks(list(y))
+    axes[0].set_yticklabels(labels, fontfamily="monospace")
+    axes[0].set_xlabel("Mean artifacts lost", fontsize=7)
+    axes[0].set_xlim(0, max(v + e for v, e in zip(vals, err)) * 1.12)
+
+    axes[1].barh(y, free, height=0.6, color=BLUE)
+    axes[1].set_xlabel("% of edges costing nothing", fontsize=7)
+    axes[1].set_xlim(0, 100)
+    for i, f in enumerate(free):
+        axes[1].text(f + 3, i, f"{f:.0f}", va="center", color=INK_2, fontsize=6.5)
+
     fig.savefig(path)
     plt.close(fig)
     print(f"wrote {path}")

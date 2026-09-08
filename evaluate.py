@@ -52,6 +52,28 @@ def evaluate_graphs(true_graph, tracked_graph):
             and true_status.get(p["model"]) == "recoverable_by_rollback"
         ]
 
+        # The symmetric error, and the more dangerous one. The tracked graph
+        # says a model can be rolled back; the truth is that it cannot, because
+        # an edge that would have revealed a compromised merge parent, or the
+        # compromise of the target itself, was never recorded. Acting on this
+        # verdict reintroduces the compromise. The previous generator made it
+        # unobservable by construction, since merges had no descendants.
+        false_recoverable = [
+            p["model"] for p in plans
+            if p["status"] == "recoverable_by_rollback"
+            and true_status.get(p["model"]) in (
+                "unrecoverable_by_rollback", "blocked_on_compromised_merge_parent")
+        ]
+
+        # Planner soundness: whenever the tracked planner proposes a rollback
+        # target, is that target genuinely outside the TRUE blast radius? A
+        # violation means the plan rebuilds from something itself compromised.
+        unsound_targets = [
+            (p["model"], p["recovery_target"]) for p in plans
+            if p["status"] == "recoverable_by_rollback"
+            and p["recovery_target"] in true_affected
+        ]
+
         results.append({
             "patient_zero": pz,
             "pz_position": true_graph.nodes[pz].get("operation"),
@@ -66,6 +88,10 @@ def evaluate_graphs(true_graph, tracked_graph):
             "recovery": plan_summary,
             "false_unrecoverable": false_unrecoverable,
             "false_unrecoverable_count": len(false_unrecoverable),
+            "false_recoverable": false_recoverable,
+            "false_recoverable_count": len(false_recoverable),
+            "unsound_targets": unsound_targets,
+            "unsound_target_count": len(unsound_targets),
             "recovery_plans": plans,
         })
 
@@ -99,6 +125,8 @@ def summarize(results):
         "average_query_time_ms": round(sum(r["query_time_ms"] for r in results) / n, 4),
         "recovery_by_pz_position": {k: dict(v) for k, v in by_position.items()},
         "total_false_unrecoverable": sum(r["false_unrecoverable_count"] for r in results),
+        "total_false_recoverable": sum(r["false_recoverable_count"] for r in results),
+        "total_unsound_targets": sum(r["unsound_target_count"] for r in results),
     }
 
 

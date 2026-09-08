@@ -10,16 +10,16 @@
   },
   "fam1-root": {
     "id": "fam1-root",
-    "hash": "sha256:06d7e805da84",
+    "hash": "sha256:6706d7e805da",
     "parent_ids": [],
     "operation": "root",
     "signed": true,
-    "is_patient_zero": true,
+    "is_patient_zero": false,
     "generation": 0
   },
   "fam2-root": {
     "id": "fam2-root",
-    "hash": "sha256:a32c3bb81e3c",
+    "hash": "sha256:846a32c3bb81",
     "parent_ids": [],
     "operation": "root",
     "signed": true,
@@ -28,456 +28,166 @@
   },
   "fam3-root": {
     "id": "fam3-root",
-    "hash": "sha256:9b62179273c8",
+    "hash": "sha256:e3c29b621792",
     "parent_ids": [],
     "operation": "root",
     "signed": true,
-    "is_patient_zero": false,
-    "generation": 0
-  },
-  "fam3-g1-4": {
-    "id": "fam3-g1-4",
-    "hash": "sha256:5bb682575ec8",
-    "parent_ids": [
-      "fam3-root"
-    ],
-    "operation": "quantize",
-    "signed": false,
-    "is_patient_zero": false,
-    "generation": 1
-  },
-  "fam3-g2-5": {
-    "id": "fam3-g2-5",
-    "hash": "sha256:a171ac826a6f",
-    "parent_ids": [
-      "fam3-g1-4"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
     "is_patient_zero": true,
-    "generation": 2
-  },
-  "fam3-g3-6": {
-    "id": "fam3-g3-6",
-    "hash": "sha256:8478dcb74f21",
-    "parent_ids": [
-      "fam3-g2-5"
-    ],
-    "operation": "fine-tune",
-    "signed": false,
-    "is_patient_zero": false,
-    "generation": 3
-  },
-  "fam3-g3-7": {
-    "id": "fam3-g3-7",
-    "hash": "sha256:5d2cce8038a3",
-    "parent_ids": [
-      "fam3-g2-5"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 3
-  },
-  "fam3-g3-8": {
-    "id": "fam3-g3-8",
-    "hash": "sha256:0853964b50af",
-    "parent_ids": [
-      "fam3-g2-5"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 3
-  },
-  "fam3-g4-9": {
-    "id": "fam3-g4-9",
-    "hash": "sha256:971722f244f5",
-    "parent_ids": [
-      "fam3-g3-6"
-    ],
-    "operation": "quantize",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 4
-  },
-  "fam3-g4-10": {
-    "id": "fam3-g4-10",
-    "hash": "sha256:d669cbee3772",
-    "parent_ids": [
-      "fam3-g3-6"
-    ],
-    "operation": "quantize",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 4
-  },
-  "fam3-g4-11": {
-    "id": "fam3-g4-11",
-    "hash": "sha256:77021721a278",
-    "parent_ids": [
-      "fam3-g3-6"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 4
+    "generation": 0
   },
   "fam4-root": {
     "id": "fam4-root",
-    "hash": "sha256:f7fd633dbdde",
+    "hash": "sha256:73c8eb5bb682",
     "parent_ids": [],
     "operation": "root",
     "signed": true,
-    "is_patient_zero": false,
+    "is_patient_zero": true,
     "generation": 0
-  },
-  "fam4-g1-13": {
-    "id": "fam4-g1-13",
-    "hash": "sha256:31ca3766e4d5",
-    "parent_ids": [
-      "fam4-root"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 1
-  },
-  "fam4-g1-14": {
-    "id": "fam4-g1-14",
-    "hash": "sha256:2e310275dff6",
-    "parent_ids": [
-      "fam4-root"
-    ],
-    "operation": "fine-tune",
-    "signed": false,
-    "is_patient_zero": true,
-    "generation": 1
-  },
-  "fam4-g2-15": {
-    "id": "fam4-g2-15",
-    "hash": "sha256:0c8e9df46961",
-    "parent_ids": [
-      "fam4-g1-13"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 2
-  },
-  "fam4-g2-16": {
-    "id": "fam4-g2-16",
-    "hash": "sha256:a11f5125227c",
-    "parent_ids": [
-      "fam4-g1-13"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 2
-  },
-  "fam4-g2-17": {
-    "id": "fam4-g2-17",
-    "hash": "sha256:712da86a78c4",
-    "parent_ids": [
-      "fam4-g1-13"
-    ],
-    "operation": "quantize",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 2
-  },
-  "fam4-g2-18": {
-    "id": "fam4-g2-18",
-    "hash": "sha256:20e32684b27b",
-    "parent_ids": [
-      "fam4-g1-14"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 2
-  },
-  "fam4-g3-19": {
-    "id": "fam4-g3-19",
-    "hash": "sha256:909348334896",
-    "parent_ids": [
-      "fam4-g2-15"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 3
-  },
-  "fam4-g3-20": {
-    "id": "fam4-g3-20",
-    "hash": "sha256:f812d810a485",
-    "parent_ids": [
-      "fam4-g2-17"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": true,
-    "generation": 3
-  },
-  "fam4-g3-21": {
-    "id": "fam4-g3-21",
-    "hash": "sha256:03241b4d419b",
-    "parent_ids": [
-      "fam4-g2-18"
-    ],
-    "operation": "fine-tune",
-    "signed": false,
-    "is_patient_zero": false,
-    "generation": 3
-  },
-  "fam4-g4-22": {
-    "id": "fam4-g4-22",
-    "hash": "sha256:b673bd4755d0",
-    "parent_ids": [
-      "fam4-g3-19"
-    ],
-    "operation": "quantize",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 4
-  },
-  "fam4-g4-23": {
-    "id": "fam4-g4-23",
-    "hash": "sha256:d7853c1f76eb",
-    "parent_ids": [
-      "fam4-g3-19"
-    ],
-    "operation": "quantize",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 4
-  },
-  "fam4-g4-24": {
-    "id": "fam4-g4-24",
-    "hash": "sha256:06ca828bca03",
-    "parent_ids": [
-      "fam4-g3-20"
-    ],
-    "operation": "fine-tune",
-    "signed": false,
-    "is_patient_zero": false,
-    "generation": 4
-  },
-  "fam4-g4-25": {
-    "id": "fam4-g4-25",
-    "hash": "sha256:813dbad3c681",
-    "parent_ids": [
-      "fam4-g3-20"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 4
   },
   "fam5-root": {
     "id": "fam5-root",
-    "hash": "sha256:6bd2aa399dac",
+    "hash": "sha256:575ec87a171a",
     "parent_ids": [],
     "operation": "root",
     "signed": true,
     "is_patient_zero": false,
     "generation": 0
-  },
-  "fam5-g1-27": {
-    "id": "fam5-g1-27",
-    "hash": "sha256:6dc59c0996da",
-    "parent_ids": [
-      "fam5-root"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 1
-  },
-  "fam5-g1-28": {
-    "id": "fam5-g1-28",
-    "hash": "sha256:6f529a279764",
-    "parent_ids": [
-      "fam5-root"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 1
-  },
-  "fam5-g2-29": {
-    "id": "fam5-g2-29",
-    "hash": "sha256:2ed6cfc7403d",
-    "parent_ids": [
-      "fam5-g1-28"
-    ],
-    "operation": "quantize",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 2
-  },
-  "fam5-g3-30": {
-    "id": "fam5-g3-30",
-    "hash": "sha256:e173e4eaede5",
-    "parent_ids": [
-      "fam5-g2-29"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 3
-  },
-  "fam5-g3-31": {
-    "id": "fam5-g3-31",
-    "hash": "sha256:878f78e2978a",
-    "parent_ids": [
-      "fam5-g2-29"
-    ],
-    "operation": "fine-tune",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 3
-  },
-  "fam5-g4-32": {
-    "id": "fam5-g4-32",
-    "hash": "sha256:7c462ddaed16",
-    "parent_ids": [
-      "fam5-g3-30"
-    ],
-    "operation": "fine-tune",
-    "signed": false,
-    "is_patient_zero": false,
-    "generation": 4
-  },
-  "fam5-g4-33": {
-    "id": "fam5-g4-33",
-    "hash": "sha256:0cf0b9cd7f78",
-    "parent_ids": [
-      "fam5-g3-31"
-    ],
-    "operation": "quantize",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 4
   },
   "fam6-root": {
     "id": "fam6-root",
-    "hash": "sha256:0cac5e40c02d",
+    "hash": "sha256:c826a6fce484",
     "parent_ids": [],
     "operation": "root",
     "signed": true,
-    "is_patient_zero": true,
+    "is_patient_zero": false,
     "generation": 0
   },
-  "merge-0-35": {
-    "id": "merge-0-35",
-    "hash": "sha256:ca6eaac8d82f",
+  "fam1-g1-7": {
+    "id": "fam1-g1-7",
+    "hash": "sha256:dcb74f21345d",
     "parent_ids": [
-      "fam3-root",
       "fam1-root"
     ],
-    "operation": "merge",
+    "operation": "fine-tune",
     "signed": true,
     "is_patient_zero": false,
     "generation": 1
   },
-  "merge-1-36": {
-    "id": "merge-1-36",
-    "hash": "sha256:210760474f36",
+  "fam2-g1-8": {
+    "id": "fam2-g1-8",
+    "hash": "sha256:e8038a39d5e0",
     "parent_ids": [
-      "fam4-g2-17",
-      "fam0-root"
-    ],
-    "operation": "merge",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 3
-  },
-  "merge-2-37": {
-    "id": "merge-2-37",
-    "hash": "sha256:59309cc62739",
-    "parent_ids": [
-      "fam2-root",
-      "fam6-root"
-    ],
-    "operation": "merge",
-    "signed": false,
-    "is_patient_zero": false,
-    "generation": 1
-  },
-  "merge-3-38": {
-    "id": "merge-3-38",
-    "hash": "sha256:bdb2a0df3dbe",
-    "parent_ids": [
-      "fam4-g4-24",
-      "fam0-root"
-    ],
-    "operation": "merge",
-    "signed": false,
-    "is_patient_zero": false,
-    "generation": 5
-  },
-  "merge-4-39": {
-    "id": "merge-4-39",
-    "hash": "sha256:fed8a728e7ec",
-    "parent_ids": [
-      "fam3-g4-11",
-      "fam1-root"
-    ],
-    "operation": "merge",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 5
-  },
-  "merge-5-40": {
-    "id": "merge-5-40",
-    "hash": "sha256:6b8a880627df",
-    "parent_ids": [
-      "fam3-g2-5",
       "fam2-root"
     ],
-    "operation": "merge",
-    "signed": true,
+    "operation": "fine-tune",
+    "signed": false,
     "is_patient_zero": false,
-    "generation": 3
+    "generation": 1
   },
-  "lora-0-41": {
-    "id": "lora-0-41",
-    "hash": "sha256:ffe0297c79bf",
-    "parent_ids": [
-      "fam3-g3-8"
-    ],
-    "operation": "compose",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 4
-  },
-  "lora-1-42": {
-    "id": "lora-1-42",
-    "hash": "sha256:bdabe898736a",
-    "parent_ids": [
-      "fam4-g3-21"
-    ],
-    "operation": "compose",
-    "signed": true,
-    "is_patient_zero": false,
-    "generation": 4
-  },
-  "lora-2-43": {
-    "id": "lora-2-43",
-    "hash": "sha256:566f893697b5",
+  "fam3-g1-9": {
+    "id": "fam3-g1-9",
+    "hash": "sha256:53964b50af03",
     "parent_ids": [
       "fam3-root"
     ],
-    "operation": "compose",
+    "operation": "fine-tune",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 1
+  },
+  "fam3-g1-10": {
+    "id": "fam3-g1-10",
+    "hash": "sha256:971722f244f5",
+    "parent_ids": [
+      "fam3-root"
+    ],
+    "operation": "quantize",
     "signed": true,
     "is_patient_zero": false,
     "generation": 1
   },
-  "lora-3-44": {
-    "id": "lora-3-44",
-    "hash": "sha256:0481194f309f",
+  "fam4-g1-11": {
+    "id": "fam4-g1-11",
+    "hash": "sha256:669cbee3772a",
+    "parent_ids": [
+      "fam4-root"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 1
+  },
+  "fam4-g1-12": {
+    "id": "fam4-g1-12",
+    "hash": "sha256:7021721a278f",
+    "parent_ids": [
+      "fam4-root"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 1
+  },
+  "fam6-g1-13": {
+    "id": "fam6-g1-13",
+    "hash": "sha256:f7fd633dbdde",
+    "parent_ids": [
+      "fam6-root"
+    ],
+    "operation": "fine-tune",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 1
+  },
+  "fam6-g1-14": {
+    "id": "fam6-g1-14",
+    "hash": "sha256:31ca3766e4d5",
+    "parent_ids": [
+      "fam6-root"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 1
+  },
+  "fam6-g1-15": {
+    "id": "fam6-g1-15",
+    "hash": "sha256:2e310275dff6",
+    "parent_ids": [
+      "fam6-root"
+    ],
+    "operation": "fine-tune",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 1
+  },
+  "merge-g1-16": {
+    "id": "merge-g1-16",
+    "hash": "sha256:0c8e9df46961",
+    "parent_ids": [
+      "fam1-root",
+      "fam3-root"
+    ],
+    "operation": "merge",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 1
+  },
+  "merge-g1-17": {
+    "id": "merge-g1-17",
+    "hash": "sha256:11f5125227c3",
+    "parent_ids": [
+      "fam5-root",
+      "fam2-root"
+    ],
+    "operation": "merge",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 1
+  },
+  "lora-g1-18": {
+    "id": "lora-g1-18",
+    "hash": "sha256:712da86a78c4",
     "parent_ids": [
       "fam4-root"
     ],
@@ -486,13 +196,1040 @@
     "is_patient_zero": false,
     "generation": 1
   },
-  "lora-4-45": {
-    "id": "lora-4-45",
-    "hash": "sha256:ea518f32cf21",
+  "lora-g1-19": {
+    "id": "lora-g1-19",
+    "hash": "sha256:9ea20e32684b",
     "parent_ids": [
-      "fam4-g3-19"
+      "fam5-root"
     ],
     "operation": "compose",
+    "signed": true,
+    "is_patient_zero": true,
+    "generation": 1
+  },
+  "fam1-g2-20": {
+    "id": "fam1-g2-20",
+    "hash": "sha256:b95e90934833",
+    "parent_ids": [
+      "fam1-g1-7"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": true,
+    "generation": 2
+  },
+  "fam1-g2-21": {
+    "id": "fam1-g2-21",
+    "hash": "sha256:96a68f812d81",
+    "parent_ids": [
+      "fam1-g1-7"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam2-g2-22": {
+    "id": "fam2-g2-22",
+    "hash": "sha256:85ed03241b4d",
+    "parent_ids": [
+      "fam2-g1-8"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam2-g2-23": {
+    "id": "fam2-g2-23",
+    "hash": "sha256:1b673bd4755d",
+    "parent_ids": [
+      "fam2-g1-8"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam3-g2-24": {
+    "id": "fam3-g2-24",
+    "hash": "sha256:d7853c1f76eb",
+    "parent_ids": [
+      "fam3-g1-9"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam3-g2-25": {
+    "id": "fam3-g2-25",
+    "hash": "sha256:7706ca828bca",
+    "parent_ids": [
+      "fam3-g1-9"
+    ],
+    "operation": "quantize",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam4-g2-26": {
+    "id": "fam4-g2-26",
+    "hash": "sha256:813dbad3c681",
+    "parent_ids": [
+      "fam4-g1-11"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam4-g2-27": {
+    "id": "fam4-g2-27",
+    "hash": "sha256:6bd2aa399dac",
+    "parent_ids": [
+      "fam4-g1-11"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam4-g2-28": {
+    "id": "fam4-g2-28",
+    "hash": "sha256:6dc59c0996da",
+    "parent_ids": [
+      "fam4-g1-11"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam4-g2-29": {
+    "id": "fam4-g2-29",
+    "hash": "sha256:f529a2797640",
+    "parent_ids": [
+      "fam4-g1-12"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam6-g2-30": {
+    "id": "fam6-g2-30",
+    "hash": "sha256:2ed6cfc7403d",
+    "parent_ids": [
+      "fam6-g1-13"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam6-g2-31": {
+    "id": "fam6-g2-31",
+    "hash": "sha256:e173e4eaede5",
+    "parent_ids": [
+      "fam6-g1-13"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam6-g2-32": {
+    "id": "fam6-g2-32",
+    "hash": "sha256:878f78e2978a",
+    "parent_ids": [
+      "fam6-g1-13"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam6-g2-33": {
+    "id": "fam6-g2-33",
+    "hash": "sha256:7c462ddaed16",
+    "parent_ids": [
+      "fam6-g1-14"
+    ],
+    "operation": "fine-tune",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam6-g2-34": {
+    "id": "fam6-g2-34",
+    "hash": "sha256:0cf0b9cd7f78",
+    "parent_ids": [
+      "fam6-g1-15"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": true,
+    "generation": 2
+  },
+  "fam2-g2-35": {
+    "id": "fam2-g2-35",
+    "hash": "sha256:c5e40c02d4e5",
+    "parent_ids": [
+      "merge-g1-17"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam4-g2-36": {
+    "id": "fam4-g2-36",
+    "hash": "sha256:aac8d82f01b7",
+    "parent_ids": [
+      "lora-g1-18"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam5-g2-37": {
+    "id": "fam5-g2-37",
+    "hash": "sha256:0760474f36e8",
+    "parent_ids": [
+      "lora-g1-19"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam5-g2-38": {
+    "id": "fam5-g2-38",
+    "hash": "sha256:359309cc6273",
+    "parent_ids": [
+      "lora-g1-19"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "merge-g2-39": {
+    "id": "merge-g2-39",
+    "hash": "sha256:3dbe4d58fed8",
+    "parent_ids": [
+      "fam6-g1-13",
+      "fam6-g1-15"
+    ],
+    "operation": "merge",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "merge-g2-40": {
+    "id": "merge-g2-40",
+    "hash": "sha256:e7eca0fa5f6b",
+    "parent_ids": [
+      "fam2-root",
+      "fam2-g1-8"
+    ],
+    "operation": "merge",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "lora-g2-41": {
+    "id": "lora-g2-41",
+    "hash": "sha256:880627df7ffe",
+    "parent_ids": [
+      "fam3-g1-10"
+    ],
+    "operation": "compose",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "lora-g2-42": {
+    "id": "lora-g2-42",
+    "hash": "sha256:297c79bfbdab",
+    "parent_ids": [
+      "fam0-root"
+    ],
+    "operation": "compose",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 2
+  },
+  "fam1-g3-43": {
+    "id": "fam1-g3-43",
+    "hash": "sha256:8736a3566f89",
+    "parent_ids": [
+      "fam1-g2-20"
+    ],
+    "operation": "fine-tune",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam1-g3-44": {
+    "id": "fam1-g3-44",
+    "hash": "sha256:97b590481194",
+    "parent_ids": [
+      "fam1-g2-20"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam1-g3-45": {
+    "id": "fam1-g3-45",
+    "hash": "sha256:09ffea518f32",
+    "parent_ids": [
+      "fam1-g2-21"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam1-g3-46": {
+    "id": "fam1-g3-46",
+    "hash": "sha256:1449273d7cee",
+    "parent_ids": [
+      "fam1-g2-21"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam2-g3-47": {
+    "id": "fam2-g3-47",
+    "hash": "sha256:136682575250",
+    "parent_ids": [
+      "fam2-g2-22"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam2-g3-48": {
+    "id": "fam2-g3-48",
+    "hash": "sha256:1799e2786d37",
+    "parent_ids": [
+      "fam2-g2-23"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam2-g3-49": {
+    "id": "fam2-g3-49",
+    "hash": "sha256:421599e3e9c8",
+    "parent_ids": [
+      "fam2-g2-23"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam3-g3-50": {
+    "id": "fam3-g3-50",
+    "hash": "sha256:1da80270815f",
+    "parent_ids": [
+      "fam3-g2-24"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam3-g3-51": {
+    "id": "fam3-g3-51",
+    "hash": "sha256:df2fbdaa35ad",
+    "parent_ids": [
+      "fam3-g2-25"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam4-g3-52": {
+    "id": "fam4-g3-52",
+    "hash": "sha256:1e2a8a3c0ed1",
+    "parent_ids": [
+      "fam4-g2-26"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam4-g3-53": {
+    "id": "fam4-g3-53",
+    "hash": "sha256:e16849ef3075",
+    "parent_ids": [
+      "fam4-g2-27"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam4-g3-54": {
+    "id": "fam4-g3-54",
+    "hash": "sha256:3e34f98dff7e",
+    "parent_ids": [
+      "fam4-g2-29"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam6-g3-55": {
+    "id": "fam6-g3-55",
+    "hash": "sha256:428da8099f4e",
+    "parent_ids": [
+      "fam6-g2-30"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam6-g3-56": {
+    "id": "fam6-g3-56",
+    "hash": "sha256:cea67c7d1afc",
+    "parent_ids": [
+      "fam6-g2-31"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam6-g3-57": {
+    "id": "fam6-g3-57",
+    "hash": "sha256:4f14a3e3e04d",
+    "parent_ids": [
+      "fam6-g2-32"
+    ],
+    "operation": "quantize",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam6-g3-58": {
+    "id": "fam6-g3-58",
+    "hash": "sha256:2f8ac2acaf12",
+    "parent_ids": [
+      "fam6-g2-32"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam6-g3-59": {
+    "id": "fam6-g3-59",
+    "hash": "sha256:72d33e5901a1",
+    "parent_ids": [
+      "fam6-g2-33"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam6-g3-60": {
+    "id": "fam6-g3-60",
+    "hash": "sha256:47d5552c7f47",
+    "parent_ids": [
+      "fam6-g2-33"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam6-g3-61": {
+    "id": "fam6-g3-61",
+    "hash": "sha256:0e952eb9d8e9",
+    "parent_ids": [
+      "fam6-g2-34"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam2-g3-62": {
+    "id": "fam2-g3-62",
+    "hash": "sha256:7cb990c801f9",
+    "parent_ids": [
+      "fam2-g2-35"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam5-g3-63": {
+    "id": "fam5-g3-63",
+    "hash": "sha256:684319e1b429",
+    "parent_ids": [
+      "fam5-g2-37"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam5-g3-64": {
+    "id": "fam5-g3-64",
+    "hash": "sha256:64b858f9a3e2",
+    "parent_ids": [
+      "fam5-g2-37"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam5-g3-65": {
+    "id": "fam5-g3-65",
+    "hash": "sha256:cb2c083eb8cb",
+    "parent_ids": [
+      "fam5-g2-38"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam5-g3-66": {
+    "id": "fam5-g3-66",
+    "hash": "sha256:0a72e9d34119",
+    "parent_ids": [
+      "fam5-g2-38"
+    ],
+    "operation": "fine-tune",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam5-g3-67": {
+    "id": "fam5-g3-67",
+    "hash": "sha256:74cebd4d3fd8",
+    "parent_ids": [
+      "fam5-g2-38"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam6-g3-68": {
+    "id": "fam6-g3-68",
+    "hash": "sha256:7b3bb1c863e2",
+    "parent_ids": [
+      "merge-g2-39"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam2-g3-69": {
+    "id": "fam2-g3-69",
+    "hash": "sha256:01a7462667a4",
+    "parent_ids": [
+      "merge-g2-40"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam3-g3-70": {
+    "id": "fam3-g3-70",
+    "hash": "sha256:44853040b7a0",
+    "parent_ids": [
+      "lora-g2-41"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "merge-g3-71": {
+    "id": "merge-g3-71",
+    "hash": "sha256:2feb3e719e01",
+    "parent_ids": [
+      "fam6-g2-33",
+      "fam1-g1-7"
+    ],
+    "operation": "merge",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "merge-g3-72": {
+    "id": "merge-g3-72",
+    "hash": "sha256:fe22a4248ac9",
+    "parent_ids": [
+      "fam4-g2-27",
+      "fam6-root"
+    ],
+    "operation": "merge",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "lora-g3-73": {
+    "id": "lora-g3-73",
+    "hash": "sha256:d336de7daecd",
+    "parent_ids": [
+      "merge-g2-40"
+    ],
+    "operation": "compose",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 3
+  },
+  "fam1-g4-74": {
+    "id": "fam1-g4-74",
+    "hash": "sha256:a8b4f2222d3b",
+    "parent_ids": [
+      "fam1-g3-43"
+    ],
+    "operation": "fine-tune",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam1-g4-75": {
+    "id": "fam1-g4-75",
+    "hash": "sha256:a3dbd199b364",
+    "parent_ids": [
+      "fam1-g3-43"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam1-g4-76": {
+    "id": "fam1-g4-76",
+    "hash": "sha256:87d080589ab0",
+    "parent_ids": [
+      "fam1-g3-46"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam1-g4-77": {
+    "id": "fam1-g4-77",
+    "hash": "sha256:c24026cdea5b",
+    "parent_ids": [
+      "fam1-g3-46"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam2-g4-78": {
+    "id": "fam2-g4-78",
+    "hash": "sha256:2145128edfed",
+    "parent_ids": [
+      "fam2-g3-47"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam2-g4-79": {
+    "id": "fam2-g4-79",
+    "hash": "sha256:d39f917c1069",
+    "parent_ids": [
+      "fam2-g3-48"
+    ],
+    "operation": "fine-tune",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam2-g4-80": {
+    "id": "fam2-g4-80",
+    "hash": "sha256:89a30fd54c7b",
+    "parent_ids": [
+      "fam2-g3-48"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam2-g4-81": {
+    "id": "fam2-g4-81",
+    "hash": "sha256:0e2adcd93c0a",
+    "parent_ids": [
+      "fam2-g3-49"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam2-g4-82": {
+    "id": "fam2-g4-82",
+    "hash": "sha256:eb2d37dc2c9a",
+    "parent_ids": [
+      "fam2-g3-49"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam3-g4-83": {
+    "id": "fam3-g4-83",
+    "hash": "sha256:36bb47348654",
+    "parent_ids": [
+      "fam3-g3-50"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam3-g4-84": {
+    "id": "fam3-g4-84",
+    "hash": "sha256:5feeaa4e2fe9",
+    "parent_ids": [
+      "fam3-g3-50"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam3-g4-85": {
+    "id": "fam3-g4-85",
+    "hash": "sha256:29ee11b922ce",
+    "parent_ids": [
+      "fam3-g3-51"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam4-g4-86": {
+    "id": "fam4-g4-86",
+    "hash": "sha256:1e6af41e3a25",
+    "parent_ids": [
+      "fam4-g3-52"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam4-g4-87": {
+    "id": "fam4-g4-87",
+    "hash": "sha256:e5bb9cda1a2a",
+    "parent_ids": [
+      "fam4-g3-52"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam4-g4-88": {
+    "id": "fam4-g4-88",
+    "hash": "sha256:984a24b9c429",
+    "parent_ids": [
+      "fam4-g3-52"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam4-g4-89": {
+    "id": "fam4-g4-89",
+    "hash": "sha256:42db0b956af6",
+    "parent_ids": [
+      "fam4-g3-53"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam6-g4-90": {
+    "id": "fam6-g4-90",
+    "hash": "sha256:1a4c4555e1db",
+    "parent_ids": [
+      "fam6-g3-56"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam6-g4-91": {
+    "id": "fam6-g4-91",
+    "hash": "sha256:e9e779f6bee9",
+    "parent_ids": [
+      "fam6-g3-56"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam6-g4-92": {
+    "id": "fam6-g4-92",
+    "hash": "sha256:56481fb33925",
+    "parent_ids": [
+      "fam6-g3-57"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam6-g4-93": {
+    "id": "fam6-g4-93",
+    "hash": "sha256:d27eb0d1cb7c",
+    "parent_ids": [
+      "fam6-g3-58"
+    ],
+    "operation": "fine-tune",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam6-g4-94": {
+    "id": "fam6-g4-94",
+    "hash": "sha256:0a3a4419f4fe",
+    "parent_ids": [
+      "fam6-g3-58"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam6-g4-95": {
+    "id": "fam6-g4-95",
+    "hash": "sha256:0864d3979317",
+    "parent_ids": [
+      "fam6-g3-58"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam6-g4-96": {
+    "id": "fam6-g4-96",
+    "hash": "sha256:3f0749d0b7d5",
+    "parent_ids": [
+      "fam6-g3-59"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam6-g4-97": {
+    "id": "fam6-g4-97",
+    "hash": "sha256:b20cf1cb80b2",
+    "parent_ids": [
+      "fam6-g3-59"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam6-g4-98": {
+    "id": "fam6-g4-98",
+    "hash": "sha256:a41ba5ef542e",
+    "parent_ids": [
+      "fam6-g3-60"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam6-g4-99": {
+    "id": "fam6-g4-99",
+    "hash": "sha256:61a9cf8169b1",
+    "parent_ids": [
+      "fam6-g3-60"
+    ],
+    "operation": "fine-tune",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam6-g4-100": {
+    "id": "fam6-g4-100",
+    "hash": "sha256:bdceca5ffb82",
+    "parent_ids": [
+      "fam6-g3-61"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam5-g4-101": {
+    "id": "fam5-g4-101",
+    "hash": "sha256:9a32a99ed5eb",
+    "parent_ids": [
+      "fam5-g3-63"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam5-g4-102": {
+    "id": "fam5-g4-102",
+    "hash": "sha256:d812cb504e14",
+    "parent_ids": [
+      "fam5-g3-64"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam5-g4-103": {
+    "id": "fam5-g4-103",
+    "hash": "sha256:bbc14ebbe24b",
+    "parent_ids": [
+      "fam5-g3-64"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam5-g4-104": {
+    "id": "fam5-g4-104",
+    "hash": "sha256:305fc388e69f",
+    "parent_ids": [
+      "fam5-g3-65"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam2-g4-105": {
+    "id": "fam2-g4-105",
+    "hash": "sha256:ab29955b7364",
+    "parent_ids": [
+      "fam2-g3-69"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam2-g4-106": {
+    "id": "fam2-g4-106",
+    "hash": "sha256:bbe4229cfdd2",
+    "parent_ids": [
+      "fam2-g3-69"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam3-g4-107": {
+    "id": "fam3-g4-107",
+    "hash": "sha256:eb454d134955",
+    "parent_ids": [
+      "fam3-g3-70"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam1-g4-108": {
+    "id": "fam1-g4-108",
+    "hash": "sha256:92868492545a",
+    "parent_ids": [
+      "merge-g3-71"
+    ],
+    "operation": "fine-tune",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam1-g4-109": {
+    "id": "fam1-g4-109",
+    "hash": "sha256:02186d0f99f7",
+    "parent_ids": [
+      "merge-g3-71"
+    ],
+    "operation": "fine-tune",
+    "signed": false,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam4-g4-110": {
+    "id": "fam4-g4-110",
+    "hash": "sha256:215edfe6a4aa",
+    "parent_ids": [
+      "merge-g3-72"
+    ],
+    "operation": "fine-tune",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam4-g4-111": {
+    "id": "fam4-g4-111",
+    "hash": "sha256:c4b3a7e38e74",
+    "parent_ids": [
+      "merge-g3-72"
+    ],
+    "operation": "quantize",
+    "signed": true,
+    "is_patient_zero": false,
+    "generation": 4
+  },
+  "fam2-g4-112": {
+    "id": "fam2-g4-112",
+    "hash": "sha256:d75aa65fef9f",
+    "parent_ids": [
+      "lora-g3-73"
+    ],
+    "operation": "fine-tune",
     "signed": true,
     "is_patient_zero": false,
     "generation": 4

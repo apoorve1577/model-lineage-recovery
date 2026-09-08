@@ -1,7 +1,5 @@
 """
-Generates a synthetic model lineage dataset: several family trees of
-fine-tuned/quantized/merged models, a few rooted at a "patient zero"
-compromised base model.
+Generates a synthetic model lineage dataset.
 
 Two graphs come out of this, and the gap between them is the whole point:
 
@@ -13,9 +11,28 @@ Two graphs come out of this, and the gap between them is the whole point:
                           manifest filed), mirroring real adoption gaps.
                           This is the ONLY input the blast radius query sees.
 
-The evaluation question the paper cares about: given only the tracked
-graph, how much of the true blast radius can we still find, and how much
-silently disappears because the edge was never recorded?
+The evaluation question: given only the tracked graph, how much of the true
+blast radius can we still find, and how much silently disappears because the
+edge was never recorded?
+
+TOPOLOGY NOTE (rewritten 2026-09-07). An earlier version of this generator
+grew the fine-tune/quantize families to completion and only then bolted merge
+and adapter nodes on top. That made every merge and every compose node a
+LEAF, which silently rigged two results:
+
+  * A merge edge could cost at most one node when unrecorded, because the
+    merge had no descendants to lose. The measured criticality gap between
+    single-parent and multi-parent edges was therefore an artifact of
+    construction rather than a property of the propagation rule.
+  * The planner's `blocked_on_compromised_merge_parent` path was never
+    exercised beyond one hop, and the symmetric planner error - tracked says
+    recoverable, truth says blocked because the merge's other-parent edge was
+    dropped - was impossible to observe at all.
+
+Generations are now interleaved: merges and adapters are created alongside
+fine-tunes at each generation and re-enter the frontier, so anything can be
+a parent of anything created later. Acyclicity still holds by construction,
+since an edge only ever runs from an existing node to a newly created one.
 """
 import json
 import random
@@ -28,6 +45,9 @@ N_MIDCHAIN_PATIENT_ZEROS = 3  # compromise introduced partway down a lineage
 MAX_GENERATIONS = 4
 UNTRACKED_EDGE_PROBABILITY = 0.15  # true edges never recorded in the tracked system
 
+N_MERGES = 6      # cross-family merges, spread across generations
+N_ADAPTERS = 5    # LoRA adapters served against a base, spread across generations
+
 random.seed(SEED)
 
 
@@ -39,97 +59,123 @@ def generate(seed=SEED, n_families=N_FAMILIES,
              n_root_pz=N_ROOT_PATIENT_ZEROS, n_mid_pz=N_MIDCHAIN_PATIENT_ZEROS):
     rng = random.Random(seed)
     records = {}
-    all_ids_by_family = []
+    # Which root families each node descends from. Used to keep merges
+    # cross-family, and it is a set because a merge descends from several.
+    families = {}
+
+    scale = n_families / N_FAMILIES
+    n_merges = max(2, round(N_MERGES * scale))
+    n_adapters = max(2, round(N_ADAPTERS * scale))
 
     for fam_idx in range(n_families):
-        family_ids = []
-
-        root_id = f"fam{fam_idx}-root"
-        root = ModelRecord(
-            id=root_id,
-            hash=fake_hash(rng),
-            parent_ids=[],
-            operation="root",
-            signed=True,
-            is_patient_zero=False,
-            generation=0,
+        rid = f"fam{fam_idx}-root"
+        records[rid] = ModelRecord(
+            id=rid, hash=fake_hash(rng), parent_ids=[], operation="root",
+            signed=True, is_patient_zero=False, generation=0,
         )
-        records[root_id] = root
-        family_ids.append(root_id)
+        families[rid] = {fam_idx}
 
-        frontier = [root_id]
-        for gen in range(1, MAX_GENERATIONS + 1):
-            next_frontier = []
-            for parent_id in frontier:
-                n_children = rng.choices([0, 1, 2, 3], weights=[0.25, 0.4, 0.25, 0.1])[0]
-                for _ in range(n_children):
-                    op = rng.choices(
-                        ["fine-tune", "quantize"], weights=[0.7, 0.3]
-                    )[0]
-                    child_id = f"fam{fam_idx}-g{gen}-{len(records)}"
-                    child = ModelRecord(
-                        id=child_id,
-                        hash=fake_hash(rng),
-                        parent_ids=[parent_id],
-                        operation=op,
-                        signed=rng.random() < 0.8,
-                        is_patient_zero=False,
-                        generation=gen,
-                    )
-                    records[child_id] = child
-                    family_ids.append(child_id)
-                    next_frontier.append(child_id)
-            frontier = next_frontier
-            if not frontier:
+    frontier = list(records.keys())
+
+    # Merges and adapters are spread over generations 1..MAX_GENERATIONS so
+    # that ones created early still have generations left to acquire children.
+    merge_budget = _spread(n_merges, MAX_GENERATIONS)
+    adapter_budget = _spread(n_adapters, MAX_GENERATIONS)
+
+    for gen in range(1, MAX_GENERATIONS + 1):
+        created = []
+
+        # 1. Ordinary single-parent derivations from the previous frontier.
+        for parent_id in frontier:
+            for _ in range(rng.choices([0, 1, 2, 3], weights=[0.25, 0.4, 0.25, 0.1])[0]):
+                op = rng.choices(["fine-tune", "quantize"], weights=[0.7, 0.3])[0]
+                cid = f"fam{min(families[parent_id])}-g{gen}-{len(records)}"
+                records[cid] = ModelRecord(
+                    id=cid, hash=fake_hash(rng), parent_ids=[parent_id],
+                    operation=op, signed=rng.random() < 0.8,
+                    is_patient_zero=False, generation=gen,
+                )
+                families[cid] = set(families[parent_id])
+                created.append(cid)
+
+        pool = [r for r in records if records[r].generation < gen]
+
+        # 2. Merges. Most join separate lineages, but a third join two
+        #    branches that share an ancestor -- merging two fine-tunes of one
+        #    base is among the most common real cases. That matters here: if
+        #    every merge were cross-family, no merge could ever have two
+        #    parents affected by the same patient zero, and the planner's
+        #    `blocked_on_compromised_merge_parent` class would be unreachable
+        #    in the only situation it was written for.
+        for _ in range(merge_budget[gen - 1]):
+            same_family = rng.random() < 0.35
+            pair = (_pick_same_family_pair(pool, families, rng) if same_family
+                    else _pick_cross_family_pair(pool, families, rng))
+            pair = pair or _pick_cross_family_pair(pool, families, rng)
+            if pair is None:
+                continue
+            a, b = pair
+            mid = f"merge-g{gen}-{len(records)}"
+            records[mid] = ModelRecord(
+                id=mid, hash=fake_hash(rng), parent_ids=[a, b], operation="merge",
+                signed=rng.random() < 0.6, is_patient_zero=False, generation=gen,
+            )
+            families[mid] = families[a] | families[b]
+            created.append(mid)
+
+        # 3. LoRA adapters, served against a base rather than merged into it.
+        #    signed is forced True: the point of this case is that the
+        #    adapter's own signature verifies perfectly while the base
+        #    underneath it is compromised.
+        bases = [r for r in pool if records[r].operation != "compose"]
+        for _ in range(adapter_budget[gen - 1]):
+            if not bases:
                 break
+            base = rng.choice(bases)
+            aid = f"lora-g{gen}-{len(records)}"
+            records[aid] = ModelRecord(
+                id=aid, hash=fake_hash(rng), parent_ids=[base], operation="compose",
+                signed=True, is_patient_zero=False, generation=gen,
+            )
+            families[aid] = set(families[base])
+            created.append(aid)
 
-        all_ids_by_family.append(family_ids)
-
-    # A handful of cross-family merges: combine a node from one family with
-    # a node from another. If either parent is in a compromised family's
-    # descendant set, the merge inherits the compromise, this is exactly
-    # the case existing tools handle worst.
-    n_merges = max(2, round(6 * n_families / N_FAMILIES))
-    all_ids = list(records.keys())
-    for i in range(n_merges):
-        fam_a, fam_b = rng.sample(range(n_families), 2)
-        parent_a = rng.choice(all_ids_by_family[fam_a])
-        parent_b = rng.choice(all_ids_by_family[fam_b])
-        gen = max(records[parent_a].generation, records[parent_b].generation) + 1
-        merge_id = f"merge-{i}-{len(records)}"
-        merge_node = ModelRecord(
-            id=merge_id,
-            hash=fake_hash(rng),
-            parent_ids=[parent_a, parent_b],
-            operation="merge",
-            signed=rng.random() < 0.6,
-            is_patient_zero=False,
-            generation=gen,
-        )
-        records[merge_id] = merge_node
-        all_ids.append(merge_id)
-
-    # LoRA adapters, served against a base rather than merged into it.
-    # Signed is forced True: the point of this case is that the adapter's
-    # own signature verifies perfectly while the base underneath it is
-    # compromised. Per-artifact verification cannot see this at all.
-    n_adapters = max(2, round(5 * n_families / N_FAMILIES))
-    base_candidates = [r.id for r in records.values() if r.operation in ("root", "fine-tune")]
-    for i in range(n_adapters):
-        base_id = rng.choice(base_candidates)
-        adapter_id = f"lora-{i}-{len(records)}"
-        records[adapter_id] = ModelRecord(
-            id=adapter_id,
-            hash=fake_hash(rng),
-            parent_ids=[base_id],
-            operation="compose",
-            signed=True,
-            is_patient_zero=False,
-            generation=records[base_id].generation + 1,
-        )
+        # Everything created this generation - merges and adapters included -
+        # can be derived from next generation. This is the fix.
+        frontier = created
+        if not frontier:
+            break
 
     assign_patient_zeros(records, rng, n_root_pz, n_mid_pz)
     return records
+
+
+def _spread(total, buckets):
+    """Distribute `total` items over `buckets` generations as evenly as
+    possible, front-loaded, leaving the last generation empty so that
+    late-created merges and adapters still have a chance at children."""
+    usable = max(1, buckets - 1)
+    out = [total // usable] * usable + [0] * (buckets - usable)
+    for i in range(total % usable):
+        out[i] += 1
+    return out
+
+
+def _pick_cross_family_pair(pool, families, rng, tries=25):
+    for _ in range(tries):
+        a, b = rng.choice(pool), rng.choice(pool)
+        if a != b and not (families[a] & families[b]):
+            return a, b
+    return None
+
+
+def _pick_same_family_pair(pool, families, rng, tries=25):
+    """Two nodes from the same family: sibling branches off a shared ancestor."""
+    for _ in range(tries):
+        a, b = rng.choice(pool), rng.choice(pool)
+        if a != b and (families[a] & families[b]):
+            return a, b
+    return None
 
 
 def assign_patient_zeros(records, rng,
@@ -140,56 +186,45 @@ def assign_patient_zeros(records, rng,
     Root patient zeros model a poisoned foundation model or dataset: every
     descendant is affected and there is no clean ancestor to roll back to.
     Mid-chain patient zeros model a compromise introduced during one team's
-    fine-tune: descendants are affected, but a clean ancestor still exists
-    upstream, so rollback is actually possible.
+    derivation, so a clean ancestor still exists upstream and rollback is
+    actually possible.
 
-    The distinction matters because it determines whether recovery means
-    'roll back' or 'rebuild from scratch', and no existing tooling
-    distinguishes the two.
+    Mid-chain candidates deliberately include merge and compose nodes, not
+    just fine-tunes: a compromise discovered in a merged model, or in an
+    adapter, is a case the recoverability taxonomy has to handle.
     """
     roots = [r for r in records.values() if r.operation == "root"]
-    non_roots = [
-        r for r in records.values()
-        if r.operation != "root" and r.generation >= 1
-    ]
-
     for r in rng.sample(roots, min(n_root_pz, len(roots))):
         r.is_patient_zero = True
 
-    # Only pick mid-chain nodes that aren't already downstream of a root PZ,
-    # otherwise the two cases confound each other in the evaluation.
-    root_pz_ids = {r.id for r in records.values() if r.is_patient_zero}
-    contaminated = set()
-    frontier = list(root_pz_ids)
     child_map = {}
     for rid, rec in records.items():
         for p in rec.parent_ids:
             child_map.setdefault(p, []).append(rid)
-    while frontier:
-        cur = frontier.pop()
-        for child in child_map.get(cur, []):
+
+    # Nodes already downstream of a root patient zero are excluded, otherwise
+    # the root and mid-chain cases confound each other in the evaluation.
+    contaminated, stack = set(), [r.id for r in records.values() if r.is_patient_zero]
+    while stack:
+        for child in child_map.get(stack.pop(), []):
             if child not in contaminated:
                 contaminated.add(child)
-                frontier.append(child)
+                stack.append(child)
 
-    # Only pick mid-chain nodes that actually have descendants. A patient
-    # zero with no children has a blast radius of one and tells us nothing
-    # about recovery, which is the whole thing being measured.
     descendant_count = {}
     for rid in records:
         seen, stack = set(), list(child_map.get(rid, []))
         while stack:
             cur = stack.pop()
-            if cur in seen:
-                continue
-            seen.add(cur)
-            stack.extend(child_map.get(cur, []))
+            if cur not in seen:
+                seen.add(cur)
+                stack.extend(child_map.get(cur, []))
         descendant_count[rid] = len(seen)
 
     eligible = [
-        r for r in non_roots
-        if r.id not in contaminated
-        and not r.is_patient_zero
+        r for r in records.values()
+        if r.operation != "root" and r.generation >= 1
+        and r.id not in contaminated and not r.is_patient_zero
         and descendant_count.get(r.id, 0) >= 2
     ]
     for r in rng.sample(eligible, min(n_mid_pz, len(eligible))):
@@ -198,13 +233,83 @@ def assign_patient_zeros(records, rng,
 
 def build_tracked_edges(records, rng, drop_p=UNTRACKED_EDGE_PROBABILITY):
     """Drop each true edge independently with probability drop_p."""
-    tracked = {}
+    return {
+        rid: [p for p in rec.parent_ids if rng.random() >= drop_p]
+        for rid, rec in records.items()
+    }
+
+
+# Per-operation untracked rates. The uniform model above assumes every kind of
+# derivation is equally likely to go unrecorded, which is unrealistic: an
+# automated quantization step is plausibly attested at a very different rate
+# than a deliberate, reviewed model merge. These scenarios are each calibrated
+# against the measured edge mix so that every one drops the same ~15% of edges
+# overall. Any difference in outcome is therefore attributable to the STRUCTURE
+# of the missingness, not to its magnitude.
+DROP_SCENARIOS = {
+    "uniform": {"fine-tune": 0.15, "quantize": 0.15, "merge": 0.15, "compose": 0.15},
+    "routine_ops_underreported": {
+        "fine-tune": 0.08, "quantize": 0.35, "merge": 0.05, "compose": 0.35},
+    "deliberate_ops_underreported": {
+        "fine-tune": 0.13, "quantize": 0.02, "merge": 0.40, "compose": 0.02},
+    "composition_blind_spot": {
+        "fine-tune": 0.0935, "quantize": 0.0935, "merge": 0.0935, "compose": 0.80},
+}
+
+
+def build_tracked_edges_by_op(records, rng, rates):
+    """Drop each true edge with a probability that depends on the operation
+    that produced the child. Edge (parent -> child) is typed by the child's
+    operation, which is exactly the derivation whose attestation is missing."""
+    return {
+        rid: [p for p in rec.parent_ids if rng.random() >= rates.get(rec.operation, 0.0)]
+        for rid, rec in records.items()
+    }
+
+
+# An adversary who wants to stay hidden does not drop edges at random: they
+# decline to attest the derivations that would expose them. This withholds the
+# edges immediately below patient zero, which is the cheapest possible way to
+# truncate a blast radius, and it is the missingness model the threat model
+# implies but the uniform sweep does not test.
+def build_tracked_edges_adversarial(records, rng, drop_p, hops=2, focus=0.9):
+    """Edges within `hops` of a patient zero are dropped with probability
+    `focus`; the rest are dropped at whatever uniform rate keeps the overall
+    fraction equal to drop_p, so the comparison against the uniform sweep is
+    like-for-like."""
+    child_map = {}
     for rid, rec in records.items():
-        tracked_parents = [
-            p for p in rec.parent_ids if rng.random() >= drop_p
-        ]
-        tracked[rid] = tracked_parents
-    return tracked
+        for p in rec.parent_ids:
+            child_map.setdefault(p, []).append(rid)
+
+    near, frontier = set(), [r.id for r in records.values() if r.is_patient_zero]
+    for _ in range(hops):
+        nxt = []
+        for node in frontier:
+            for c in child_map.get(node, []):
+                if (node, c) not in near:
+                    near.add((node, c))
+                    nxt.append(c)
+        frontier = nxt
+
+    all_edges = [(p, rid) for rid, rec in records.items() for p in rec.parent_ids]
+    n_near = sum(1 for e in all_edges if e in near)
+    n_far = len(all_edges) - n_near
+    budget = drop_p * len(all_edges)
+
+    # Spend the budget on near-patient-zero edges first, but never overspend
+    # it: if the near set alone would exceed the budget, cap the near rate so
+    # the adversary drops exactly as many edges as benign loss would. Without
+    # this the adversarial arm drops more edges overall and the comparison
+    # measures budget, not strategy.
+    near_p = min(focus, budget / n_near) if n_near else 0.0
+    far_p = 0.0 if n_far == 0 else max(0.0, min(1.0, (budget - near_p * n_near) / n_far))
+
+    return {
+        rid: [p for p in rec.parent_ids
+              if rng.random() >= (near_p if (p, rid) in near else far_p)]
+        for rid, rec in records.items()
+    }
 
 
 if __name__ == "__main__":
@@ -212,9 +317,8 @@ if __name__ == "__main__":
     rng = random.Random(SEED + 1)
     tracked_parents = build_tracked_edges(records, rng)
 
-    true_out = {rid: r.to_dict() for rid, r in records.items()}
     with open("data/true_lineage.json", "w") as f:
-        json.dump(true_out, f, indent=2)
+        json.dump({rid: r.to_dict() for rid, r in records.items()}, f, indent=2)
 
     tracked_out = {}
     for rid, r in records.items():
@@ -224,52 +328,18 @@ if __name__ == "__main__":
     with open("data/tracked_lineage.json", "w") as f:
         json.dump(tracked_out, f, indent=2)
 
-    n_models = len(records)
     pz = [r for r in records.values() if r.is_patient_zero]
-    n_root_pz = sum(1 for r in pz if r.operation == "root")
-    n_mid_pz = len(pz) - n_root_pz
-    n_true_edges = sum(len(r.parent_ids) for r in records.values())
-    n_tracked_edges = sum(len(p) for p in tracked_parents.values())
-    print(f"Generated {n_models} models across {N_FAMILIES} families")
-    print(f"Patient zeros: {len(pz)} total "
-          f"({n_root_pz} at roots, {n_mid_pz} mid-chain)")
-    print(f"True edges: {n_true_edges}, tracked edges: {n_tracked_edges} "
-          f"({n_true_edges - n_tracked_edges} dropped, "
-          f"{100 * (n_true_edges - n_tracked_edges) / n_true_edges:.1f}% untracked)")
-
-
-# Per-operation untracked rates. The uniform model in build_tracked_edges
-# assumes every kind of derivation is equally likely to go unrecorded, which
-# is the assumption the paper's limitations section flags as unrealistic:
-# an automated quantization step is plausibly attested at a very different
-# rate than a deliberate, reviewed model merge. These scenarios are each
-# calibrated against the measured edge mix (fine-tune 0.520, quantize 0.207,
-# merge 0.193, compose 0.080) so that every one drops the same ~15% of edges
-# overall. Any difference in outcome is therefore attributable to the
-# STRUCTURE of the missingness, not to its magnitude.
-DROP_SCENARIOS = {
-    # Every derivation equally likely to go unrecorded. The paper's default.
-    "uniform": {"fine-tune": 0.15, "quantize": 0.15, "merge": 0.15, "compose": 0.15},
-    # Routine automated steps under-reported; deliberate reviewed ones logged.
-    "routine_ops_underreported": {
-        "fine-tune": 0.08, "quantize": 0.35, "merge": 0.05, "compose": 0.35},
-    # The inverse: ad-hoc merges escape the pipeline, automation always logs.
-    "deliberate_ops_underreported": {
-        "fine-tune": 0.13, "quantize": 0.02, "merge": 0.40, "compose": 0.02},
-    # Adapter serving is outside every signing pipeline that exists today,
-    # so composition edges are the ones that mostly do not get recorded.
-    "composition_blind_spot": {
-        "fine-tune": 0.0935, "quantize": 0.0935, "merge": 0.0935, "compose": 0.80},
-}
-
-
-def build_tracked_edges_by_op(records, rng, rates):
-    """Drop each true edge with a probability that depends on the operation
-    that produced the child. Edge (parent -> child) is typed by the child's
-    operation, which is exactly the derivation whose attestation would be
-    missing."""
-    tracked = {}
-    for rid, rec in records.items():
-        p = rates.get(rec.operation, 0.0)
-        tracked[rid] = [par for par in rec.parent_ids if rng.random() >= p]
-    return tracked
+    n_true = sum(len(r.parent_ids) for r in records.values())
+    n_tracked = sum(len(p) for p in tracked_parents.values())
+    ops = {}
+    for r in records.values():
+        ops[r.operation] = ops.get(r.operation, 0) + 1
+    print(f"Generated {len(records)} models across {N_FAMILIES} families")
+    print(f"  by operation: {ops}")
+    print(f"Patient zeros: {len(pz)} "
+          f"({sum(1 for r in pz if r.operation == 'root')} at roots, "
+          f"{sum(1 for r in pz if r.operation != 'root')} mid-chain; "
+          f"ops: {sorted(r.operation for r in pz)})")
+    print(f"True edges: {n_true}, tracked edges: {n_tracked} "
+          f"({n_true - n_tracked} dropped, "
+          f"{100 * (n_true - n_tracked) / n_true:.1f}% untracked)")

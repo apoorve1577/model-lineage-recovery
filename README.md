@@ -40,132 +40,62 @@ Patient zeros are placed at two structurally different positions: at lineage **r
 
 ## Results
 
-Two evaluations. `evaluate.py` runs a single fully-inspectable case at seed 42;
-`sweep.py` runs the statistical evaluation the claims actually rest on.
+Two evaluations. `evaluate.py` runs a single fully-inspectable case;
+`sweep.py` runs the statistical evaluation the claims rest on. 300 trials per
+condition, 95% confidence intervals, ~11 seconds end to end.
 
-### The worked case (`evaluate.py`, seed 42, 46 artifacts, 17.8% of edges untracked)
+### Detection
 
-| Metric | Value |
-|---|---|
-| True affected artifacts | 23 across 5 patient zeros |
-| Blast radius recall | 69.6% |
-| False positives | 0 |
-| Artifacts falsely reported unrecoverable | 3 |
-| Signed LoRA adapters contaminated via compromised base | 2 |
+| Untracked edges | Recall (95% CI) | False-unrecoverable count | rate (pooled) | rate (mid-chain) |
+|---|---|---|---|---|
+| 0% | 1.000 | 0 | 0.000 | 0.000 |
+| 5% | 0.904 ± 0.010 | 199 | 0.017 | 0.053 |
+| 15% | 0.734 ± 0.015 | 429 | 0.046 | 0.136 |
+| 30% | 0.524 ± 0.015 | 588 | 0.095 | 0.257 |
+| 50% | 0.344 ± 0.013 | 649 | 0.191 | 0.446 |
 
-This is one draw. It is kept because every model in it can be traced by hand,
-which is what makes the failure modes legible. It is not evidence on its own,
-and the paper does not treat it as such.
+### The findings
 
-### The statistical evaluation (`sweep.py`)
+**Plan soundness.** Any rollback target the planner proposes lies outside the
+*true* blast radius, even though the planner only ever sees the incomplete
+graph. Proved, and zero violations across 2,700 trials plus 1,200 stress trials
+at triple merge density. So the planner can be wrong about *whether* recovery is
+possible, but never about whether a rollback it proposes is safe to run.
 
-Four experiments. Every trial regenerates the lineage from scratch and redraws
-which edges go unrecorded, so each trial is an independent observation.
-300 trials per condition, means with 95% confidence intervals. Runs in ~7s.
+**The two error measures disagree.** The falsely-unrecoverable *rate* grows
+superlinearly in the detection miss rate (log-log slope 1.26, bootstrap CI
+[1.11, 1.46]). The *count* grows **sublinearly** (0.655, CI [0.51, 0.84]),
+because the population receiving any verdict collapses from 13,557 to 3,402.
+Cost is about the count. The defensible claim is that a larger *share* of the
+advice an operator receives is wrong, not that the volume of wrong advice grows
+disproportionately.
 
-**1. Recall degrades along a measurable curve, and false positives are always zero.**
+**The error is structurally confined.** Root patient zeros are half the verdict
+denominator and cannot produce this error at all — no clean ancestor exists
+above a root, so `unrecoverable` is simply true. Pooling dilutes the rate about
+threefold.
 
-| Untracked edges | Blast radius recall (95% CI) | False positives | False-unrecoverable rate (95% CI) |
-|---|---|---|---|
-| 0% | 1.000 | 0 | 0.000 |
-| 5% | 0.905 ± 0.012 | 0 | 0.023 ± 0.008 |
-| 10% | 0.821 ± 0.015 | 0 | 0.046 ± 0.012 |
-| 15% | 0.747 ± 0.016 | 0 | 0.078 ± 0.016 |
-| 20% | 0.674 ± 0.017 | 0 | 0.102 ± 0.018 |
-| 30% | 0.563 ± 0.016 | 0 | 0.152 ± 0.020 |
-| 50% | 0.395 ± 0.014 | 0 | 0.257 ± 0.027 |
+**Edge criticality is bimodal.** `merge` (1.367 ± 0.151) and `compose`
+(1.407 ± 0.232) edges cost *more* on average to lose than `fine-tune`
+(1.147 ± 0.052) or `quantize` (1.068 ± 0.070) — while being far more often
+free: 70% and 67% cost nothing at all, against 51% and 53%. Redundant parents
+mean losing one edge usually costs nothing; but a merge reached only through the
+dropped edge takes an aggregated subtree with it.
 
-Zero false positives across all 2,700 trials at every rate. That is the
-Soundness proposition holding empirically, not a favourable seed. At 0%
-untracked, recall is exactly 1.000 and no artifact is falsely reported
-unrecoverable, which validates the harness itself.
+> An earlier version of this repo reported the opposite — merge edges as 2.8×
+> *cheaper* to lose. That was an artifact of a generator in which merges had no
+> descendants, so a merge edge could not cost more than one node. The flaw was
+> found in external review and is documented in `generate_dataset.py`. It is
+> worth knowing how much a result like this depends on synthetic topology.
 
-**2. Recovery degrades faster than detection does.** Regressing the
-false-unrecoverable rate on the detection miss rate in log-log space gives a
-slope of **1.30**: the more damaging error grows *superlinearly* in the less
-damaging one. Partial lineage capture is not merely proportionally worse, it
-is disproportionately worse in the direction that costs money.
+**Strategic missingness breaks the benign model.** An adversary who withholds
+attestations near patient zero, rather than losing them at random, halves recall
+at an identical budget: **0.338 vs 0.734**. Attestation coverage measured in
+aggregate says nothing about coverage where an adversary chooses to hide.
 
-**3. Not all lineage edges are worth the same.** Marginal cost of one missing
-edge, measured by deleting exactly one edge and recounting the blast radius:
-
-| Edge type | Mean models lost per missing edge (95% CI) | Cut point? |
-|---|---|---|
-| `fine-tune` | 1.446 ± 0.077 | yes |
-| `quantize` | 1.460 ± 0.123 | yes |
-| `compose` | 0.600 ± 0.046 | no (leaf) |
-| `merge` | 0.524 ± 0.029 | no (redundant parent) |
-
-Single-parent derivations are cut points: losing one severs everything below
-it. Merge edges cost **2.8x less**, because compromise propagates as a logical
-OR across parents, so the surviving parent still reaches the node. The same
-parental redundancy that makes merges hard for per-artifact verification makes
-their lineage edges the cheapest ones to lose. `fine-tune` and `quantize` are
-statistically indistinguishable in *detection* criticality; they differ only in
-*recovery* cost, which is exactly why the edge type is carried on the graph.
-
-This yields an instrumentation priority an operator can act on: if you can only
-attest part of your pipeline, attest the single-parent derivations first.
-
-**4. The results survive non-uniform missingness.** The uniform per-edge drop
-model is this evaluation's weakest assumption, so it is tested rather than
-merely disclaimed. Four scenarios, each calibrated against the measured edge mix
-to drop the same ~15% of edges overall, so any difference is attributable to the
-*structure* of the missingness and not its magnitude:
-
-| Scenario | Actual untracked | Recall (95% CI) | False-unrecoverable rate |
-|---|---|---|---|
-| Uniform | 15.2% | 0.747 ± 0.016 | 0.078 ± 0.016 |
-| Routine ops under-reported | 15.4% | 0.736 ± 0.016 | 0.070 ± 0.014 |
-| Deliberate ops under-reported | 15.7% | 0.781 ± 0.014 | 0.052 ± 0.013 |
-| Composition blind spot | 15.6% | 0.781 ± 0.014 | 0.043 ± 0.011 |
-
-Recall moves only within 0.736-0.781 across radically different missingness
-structures, and zero false positives hold throughout. The headline number is
-driven by the marginal recording rate, not by which derivations go unrecorded.
-The spread that does exist is fully explained by experiment 3: scenarios that
-spare `fine-tune` edges do better, because those are the cut points.
-
-**5. Query cost tracks blast radius, not registry size.**
-
-| Families | Mean nodes | Blast radius query |
-|---|---|---|
-| 7 | 65 | 3.11 us |
-| 25 | 227 | 3.13 us |
-| 100 | 896 | 3.19 us |
-| 400 | 3,555 | 3.36 us |
-
-Flat across a 55x increase in registry size. This is not a clever
-implementation, it is the complexity: forward reachability is O(affected), and
-a compromise in one lineage does not reach further because the registry got
-bigger. The honest claim is that registry growth alone does not slow the query.
-
-### The qualitative findings
-
-**Valid signatures do not mean uncontaminated artifacts.** Two LoRA adapters,
-both correctly signed and never modified, landed inside blast radii because the
-base models they are served against were compromised. The deployed model is base
-plus adapter, and only the adapter was signed. Per-artifact verification passes
-and the artifact is still unsafe.
-
-**Compromise position determines whether recovery is even possible.** Root
-patient zeros left 0 affected artifacts recoverable by rollback, since no clean
-ancestor exists above them. Mid-chain compromises leave a clean signed ancestor
-upstream, so rollback is genuinely available. No existing tool distinguishes
-these cases.
-
-**Missing lineage edges fail twice, and the second failure is worse.** Artifacts
-get reported unrecoverable when a valid rollback target existed, because the
-edge upward to the clean ancestor was never recorded. A detection miss leaves
-you unaware. A false unrecoverable verdict actively pushes an operator toward an
-expensive retrain when a cheap deterministic rollback was available. Experiment
-2 quantifies how much faster this error grows.
-
-**Naive nearest-clean-ancestor search is wrong on merge nodes.** It returns a
-clean parent from an unrelated lineage while the merge's other parent is still
-compromised. Merge-descended models are classified
-`blocked_on_compromised_merge_parent` and sequenced behind their parents'
-recovery instead.
+**Valid signatures do not mean uncontaminated artifacts.** A signed, unmodified
+LoRA adapter is contaminated through the base model it is served against. The
+deployed model is base plus adapter; only the adapter was signed.
 
 ## Running it
 

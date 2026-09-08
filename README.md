@@ -105,10 +105,6 @@ composition edges are about *half as likely to cost anything*
 *twice as costly when they do* (mean given nonzero: merge 4.52, compose
 4.28, against fine-tune 2.33, quantize 2.24).
 
-> Most of that zero mass is not parent redundancy. Of 1,014 zero-cost merge
-> deletions, 935 have a parent not exposed to any sampled incident at all and
-> only 79 are alternate-path cases. The ablation deletes every edge in the
-> graph, most of which are irrelevant to the incidents sampled.
 
 > Two corrections here. An earlier version reported merge edges as 2.8x
 > *cheaper* to lose — an artifact of a generator in which merges had no
@@ -134,6 +130,18 @@ deployed model is base plus adapter; only the adapter was signed.
 > independently poisoned adapter. Incidents are therefore restricted to
 > base-only compromise. An earlier version made an adapter a patient zero and
 > emitted plans telling an operator to re-serve the compromised artifact.
+
+## Verifying it
+
+`check_readme.py` sweeps every number in this file against
+`results/sweep.json` and fails on anything untraceable. It runs as a
+pre-commit hook, because this README twice carried the previous run's numbers
+while the code was correct, once in a commit whose message claimed to have
+fixed them.
+
+```
+./.venv/bin/python check_readme.py
+```
 
 ## Running it
 

@@ -11,8 +11,9 @@ Six experiments:
   3. run_scenario_sweep   non-uniform missingness, calibrated to a fixed total
   4. run_adversarial      strategic missingness: an adversary declines to
                           attest the derivations that would expose them
-  5. run_stress           merge density raised, to check that the symmetric
-                          error grows and plan soundness survives
+  5. run_stress           merge density raised, to check whether verdict
+                          disagreement and unsafe plans grow with it, and
+                          whether rollback-target soundness survives
   6. bootstrap_slopes     log-log slope of each error class against the
                           detection miss rate, with a CI that respects the
                           paired design
@@ -373,12 +374,13 @@ def run_stress(n_trials=200, drop_p=0.30):
     """Raise merge density well above the default and re-measure both planner
     error classes.
 
-    This exists because the symmetric error - the tracked planner calling an
-    artifact recoverable when the truth is blocked - is only reachable when a
-    merge can have two parents affected by the same patient zero. Denser merge
-    graphs make that configuration commoner, so if the error is real it should
-    grow here, and if the planner's soundness property is real it should
-    survive here.
+    Denser merge graphs make it likelier that a merge has two parents affected
+    by the same patient zero, which is the configuration both planner error
+    classes need. Measured outcome: verdict disagreement does rise with merge
+    density, while unsafe plans do not - they go 2, 2, 0 - and rollback-target
+    soundness holds throughout. An earlier version of this docstring asserted
+    the opposite for the dangerous error, on the strength of a metric that was
+    measuring verdict disagreement rather than unsafety.
     """
     import generate_dataset as gd
     original = gd.N_MERGES
@@ -433,8 +435,8 @@ if __name__ == "__main__":
     print(f"\nADVERSARIAL MISSINGNESS ({N_TRIALS} trials, both ~15% dropped)\n")
     adversarial_rows = run_adversarial()
 
-    print("\nMERGE-DENSITY STRESS (does the symmetric error grow, "
-          "and does plan soundness survive?)\n")
+    print("\nMERGE-DENSITY STRESS (do disagreement and unsafe plans grow "
+          "with merge density?)\n")
     stress_rows = run_stress()
 
     zero = next(r for r in drop_rows if r["drop_p"] == 0.0)

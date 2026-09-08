@@ -289,8 +289,8 @@ def build_tracked_edges_adversarial(records, rng, drop_p, hops=2, focus=0.9):
     enough that spending the whole budget on it would exceed `focus * n_near`,
     so the near rate is capped at `budget / n_near` and the far rate falls to
     roughly zero. Measured over 300 seeds at drop_p=0.15: the cap binds in
-    about 91% of them, giving a mean near-edge rate near 0.6 and a mean
-    far-edge rate near 0.003. The arm is therefore best described as "spend
+    about 90% of them, giving a mean near-edge rate of 0.60 and a mean
+    far-edge rate of 0.003. The arm is therefore best described as "spend
     the entire recording budget within `hops` of every patient zero", not as
     "90% withholding against a benign background".
 

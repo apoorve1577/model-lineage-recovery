@@ -3,7 +3,7 @@ Statistical evaluation. Every trial regenerates the lineage from scratch and
 redraws which edges go unrecorded, so each trial is an independent observation
 rather than a resample of one graph.
 
-Five experiments:
+Six experiments:
 
   1. run_drop_sweep       recall and both planner error classes against the
                           fraction of unrecorded edges
@@ -11,7 +11,9 @@ Five experiments:
   3. run_scenario_sweep   non-uniform missingness, calibrated to a fixed total
   4. run_adversarial      strategic missingness: an adversary declines to
                           attest the derivations that would expose them
-  5. bootstrap_slopes     log-log slope of each error class against the
+  5. run_stress           merge density raised, to check that the symmetric
+                          error grows and plan soundness survives
+  6. bootstrap_slopes     log-log slope of each error class against the
                           detection miss rate, with a CI that respects the
                           paired design
 

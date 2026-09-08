@@ -242,18 +242,19 @@ def build_tracked_edges(records, rng, drop_p=UNTRACKED_EDGE_PROBABILITY):
 # Per-operation untracked rates. The uniform model above assumes every kind of
 # derivation is equally likely to go unrecorded, which is unrealistic: an
 # automated quantization step is plausibly attested at a very different rate
-# than a deliberate, reviewed model merge. These scenarios are each calibrated
-# against the measured edge mix so that every one drops the same ~15% of edges
-# overall. Any difference in outcome is therefore attributable to the STRUCTURE
-# of the missingness, not to its magnitude.
-# Calibrated 2026-09-07 against the edge mix of the CURRENT generator
-# (fine-tune 0.571, quantize 0.245, merge 0.130, compose 0.054), measured over
-# 200 seeds. Expected total drop: uniform 0.1500, routine 0.1491, deliberate
-# 0.1503, composition 0.1494. An earlier set was calibrated against a previous
-# generator's mix and drifted to 13.2-15.9% once the topology changed, which
-# meant the scenarios differed in magnitude as well as structure and the
-# comparison no longer isolated structure. Recalibrate whenever the generator
-# changes; sweep.py reports realized drop fractions so the drift is visible.
+# than a deliberate, reviewed model merge. Each scenario is calibrated against
+# the measured edge mix so all of them drop the same fraction overall, which is
+# what makes any difference in outcome attributable to the STRUCTURE of the
+# missingness rather than to its magnitude.
+#
+# Calibrated 2026-09-07 against the CURRENT generator's mix (fine-tune 0.571,
+# quantize 0.245, merge 0.130, compose 0.054, over 200 seeds). Expected total
+# drop: uniform 0.1500, routine 0.1491, deliberate 0.1503, composition 0.1494.
+# An earlier set was calibrated against a previous generator and drifted to
+# 13.2-15.9% once the topology changed, at which point the scenarios differed
+# in magnitude too and the comparison no longer isolated structure. Recalibrate
+# whenever the generator changes; sweep.py reports realized drop fractions, so
+# the drift is visible rather than silent.
 DROP_SCENARIOS = {
     "uniform": {"fine-tune": 0.15, "quantize": 0.15, "merge": 0.15, "compose": 0.15},
     "routine_ops_underreported": {

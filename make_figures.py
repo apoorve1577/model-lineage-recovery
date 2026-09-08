@@ -127,8 +127,34 @@ def fig_criticality(path="figures/criticality.pdf"):
     print(f"wrote {path}")
 
 
+# What each figure plots, by JSON field, plus the caption vocabulary that must
+# accompany it. A numeric cross-check can verify that every number in the paper
+# matches the data and still miss a figure that plots the wrong column, because
+# the wrong column is also a real number from the same file. This sidecar closes
+# that gap: a checker reads it and asserts the caption says what is drawn.
+PLOTTED = {
+    "degradation.pdf": {
+        "source": "drop_rate_sweep",
+        "fields": ["drop_p", "recall_mean", "recall_ci95_halfwidth",
+                   "false_unrecoverable_rate_pooled",
+                   "by_pz_position.mid-chain.fu_rate"],
+        "caption_must_mention": ["recall", "mid-chain", "pool"],
+    },
+    "criticality.pdf": {
+        "source": "edge_criticality",
+        "fields": ["conditional_mean_given_nonzero",
+                   "conditional_ci95_halfwidth", "fraction_costing_nothing"],
+        "caption_must_mention": ["conditional", "cost nothing"],
+        "must_not_plot": ["mean_models_lost_per_missing_edge"],
+    },
+}
+
+
 if __name__ == "__main__":
     import os
     os.makedirs("figures", exist_ok=True)
     fig_degradation()
     fig_criticality()
+    with open("figures/plotted.json", "w") as f:
+        json.dump(PLOTTED, f, indent=2)
+    print("wrote figures/plotted.json")

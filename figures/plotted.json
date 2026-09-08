@@ -1,0 +1,32 @@
+{
+  "degradation.pdf": {
+    "source": "drop_rate_sweep",
+    "fields": [
+      "drop_p",
+      "recall_mean",
+      "recall_ci95_halfwidth",
+      "false_unrecoverable_rate_pooled",
+      "by_pz_position.mid-chain.fu_rate"
+    ],
+    "caption_must_mention": [
+      "recall",
+      "mid-chain",
+      "pool"
+    ]
+  },
+  "criticality.pdf": {
+    "source": "edge_criticality",
+    "fields": [
+      "conditional_mean_given_nonzero",
+      "conditional_ci95_halfwidth",
+      "fraction_costing_nothing"
+    ],
+    "caption_must_mention": [
+      "conditional",
+      "cost nothing"
+    ],
+    "must_not_plot": [
+      "mean_models_lost_per_missing_edge"
+    ]
+  }
+}

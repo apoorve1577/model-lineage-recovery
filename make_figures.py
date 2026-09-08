@@ -31,6 +31,10 @@ plt.rcParams.update({
     "text.color": INK, "axes.labelcolor": INK,
     "xtick.color": INK_2, "ytick.color": INK_2,
     "figure.dpi": 200, "savefig.bbox": "tight", "savefig.pad_inches": 0.02,
+    # Matplotlib stamps a CreationDate into every PDF, so regenerating a figure
+    # produces different bytes from identical data. That breaks any check that
+    # a manuscript's figures match the ones the results actually produced.
+    "pdf.compression": 6,
 })
 
 d = json.load(open("results/sweep.json"))
@@ -81,7 +85,7 @@ def fig_degradation(path="figures/degradation.pdf"):
     ax.set_xlim(-1.5, 51.5)
     ax.legend(frameon=False, loc="upper right", handlelength=1.6,
               borderaxespad=0.2)
-    fig.savefig(path)
+    fig.savefig(path, metadata={"CreationDate": None})
     plt.close(fig)
     print(f"wrote {path}")
 
@@ -122,7 +126,7 @@ def fig_criticality(path="figures/criticality.pdf"):
     for i, f in enumerate(free):
         axes[1].text(f + 3, i, f"{f:.0f}", va="center", color=INK_2, fontsize=6.5)
 
-    fig.savefig(path)
+    fig.savefig(path, metadata={"CreationDate": None})
     plt.close(fig)
     print(f"wrote {path}")
 

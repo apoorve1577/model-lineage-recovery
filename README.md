@@ -123,6 +123,12 @@ python3 -m venv .venv
 ./.venv/bin/python sweep.py      # the statistics   -> results/sweep.json
 ```
 
+### Reproduction
+
+`data/*.json` and `results/sweep.json` regenerate byte-identically; everything
+is seeded. `results/evaluation.json` differs only in its `query_time_ms`
+fields, which are wall-clock measurements. All substantive values match.
+
 ## Files
 
 | File | Purpose |

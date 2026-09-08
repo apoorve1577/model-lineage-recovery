@@ -9,9 +9,12 @@ never rests on colour alone -- which matters because these are printed.
 
 Figure 2 is two panels sharing a category axis rather than one chart with two
 scales: "artifacts lost" and "% costing nothing" are different units, and a
-second y-axis would be the single most misread thing in a chart. It uses one
-hue throughout, because the finding is no longer a clean binary and colouring
-it as one would assert a grouping the data does not support.
+second y-axis would be the single most misread thing in a chart. The left panel
+plots the mean CONDITIONAL on nonzero cost, because the distribution is
+zero-inflated and an unconditional mean answers neither of the two questions
+the panels are there to separate. One hue throughout: the finding is not a
+clean binary, and colouring it as one would assert a grouping the data does not
+support.
 """
 import json
 import matplotlib
@@ -84,11 +87,15 @@ def fig_degradation(path="figures/degradation.pdf"):
 
 
 def fig_criticality(path="figures/criticality.pdf"):
+    # Plot the CONDITIONAL mean, not the unconditional one. The distribution
+    # is zero-inflated, so an unconditional mean blends "how often does this
+    # cost anything" with "how much when it does" and answers neither. The two
+    # panels separate exactly those questions.
     rows = sorted(d["edge_criticality"],
-                  key=lambda r: r["mean_models_lost_per_missing_edge"])
+                  key=lambda r: r["conditional_mean_given_nonzero"])
     labels = [r["edge_type"] for r in rows]
-    vals = [r["mean_models_lost_per_missing_edge"] for r in rows]
-    err = [r["ci95_halfwidth"] for r in rows]
+    vals = [r["conditional_mean_given_nonzero"] for r in rows]
+    err = [r["conditional_ci95_halfwidth"] for r in rows]
     free = [100 * r["fraction_costing_nothing"] for r in rows]
 
     fig, axes = plt.subplots(1, 2, figsize=(3.35, 1.9), sharey=True,
@@ -106,7 +113,7 @@ def fig_criticality(path="figures/criticality.pdf"):
                            "capsize": 2.0, "capthick": 0.9})
     axes[0].set_yticks(list(y))
     axes[0].set_yticklabels(labels, fontfamily="monospace")
-    axes[0].set_xlabel("Mean artifacts lost", fontsize=7)
+    axes[0].set_xlabel("Artifacts lost, given any", fontsize=7)
     axes[0].set_xlim(0, max(v + e for v, e in zip(vals, err)) * 1.12)
 
     axes[1].barh(y, free, height=0.6, color=BLUE)

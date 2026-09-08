@@ -394,16 +394,14 @@
       "mean_actual_untracked_fraction": 0.152,
       "recall_mean": 0.7341,
       "recall_ci95_halfwidth": 0.0152,
-      "total_false_positives": 0,
-      "mean_near_edge_rate": null
+      "total_false_positives": 0
     },
     {
       "missingness": "adversarial",
       "mean_actual_untracked_fraction": 0.1484,
       "recall_mean": 0.3379,
       "recall_ci95_halfwidth": 0.0167,
-      "total_false_positives": 0,
-      "mean_near_edge_rate": null
+      "total_false_positives": 0
     }
   ],
   "merge_density_stress": [

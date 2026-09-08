@@ -334,7 +334,6 @@ def run_adversarial(n_trials=N_TRIALS, drop_p=0.15):
             "mean_actual_untracked_fraction": round(sum(actual) / len(actual), 4),
             "recall_mean": round(m_r, 4), "recall_ci95_halfwidth": round(h_r, 4),
             "total_false_positives": sum(t["false_positives"] for t in trials),
-            "mean_near_edge_rate": None,
         })
         print(f"  {label:<16} dropped={rows[-1]['mean_actual_untracked_fraction']:.3f}  "
               f"recall={m_r:.3f} +/- {h_r:.3f}")

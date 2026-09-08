@@ -11,6 +11,8 @@ authors:
     email: apoorve1577@gmail.com
 repository-code: "https://github.com/apoorve1577/model-lineage-recovery"
 license: Apache-2.0
+version: "0.2.0"
+date-released: "2026-09-07"
 abstract: >-
   Reference implementation for "Beyond Detection: A Recovery-Oriented
   Architecture for Compromised AI Model Remediation". Implements a typed

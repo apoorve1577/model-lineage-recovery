@@ -246,14 +246,22 @@ def build_tracked_edges(records, rng, drop_p=UNTRACKED_EDGE_PROBABILITY):
 # against the measured edge mix so that every one drops the same ~15% of edges
 # overall. Any difference in outcome is therefore attributable to the STRUCTURE
 # of the missingness, not to its magnitude.
+# Calibrated 2026-09-07 against the edge mix of the CURRENT generator
+# (fine-tune 0.571, quantize 0.245, merge 0.130, compose 0.054), measured over
+# 200 seeds. Expected total drop: uniform 0.1500, routine 0.1491, deliberate
+# 0.1503, composition 0.1494. An earlier set was calibrated against a previous
+# generator's mix and drifted to 13.2-15.9% once the topology changed, which
+# meant the scenarios differed in magnitude as well as structure and the
+# comparison no longer isolated structure. Recalibrate whenever the generator
+# changes; sweep.py reports realized drop fractions so the drift is visible.
 DROP_SCENARIOS = {
     "uniform": {"fine-tune": 0.15, "quantize": 0.15, "merge": 0.15, "compose": 0.15},
     "routine_ops_underreported": {
-        "fine-tune": 0.08, "quantize": 0.35, "merge": 0.05, "compose": 0.35},
+        "fine-tune": 0.0633, "quantize": 0.35, "merge": 0.0633, "compose": 0.35},
     "deliberate_ops_underreported": {
-        "fine-tune": 0.13, "quantize": 0.02, "merge": 0.40, "compose": 0.02},
+        "fine-tune": 0.14, "quantize": 0.04, "merge": 0.45, "compose": 0.04},
     "composition_blind_spot": {
-        "fine-tune": 0.0935, "quantize": 0.0935, "merge": 0.0935, "compose": 0.80},
+        "fine-tune": 0.1122, "quantize": 0.1122, "merge": 0.1122, "compose": 0.80},
 }
 
 
@@ -273,10 +281,27 @@ def build_tracked_edges_by_op(records, rng, rates):
 # truncate a blast radius, and it is the missingness model the threat model
 # implies but the uniform sweep does not test.
 def build_tracked_edges_adversarial(records, rng, drop_p, hops=2, focus=0.9):
-    """Edges within `hops` of a patient zero are dropped with probability
-    `focus`; the rest are dropped at whatever uniform rate keeps the overall
-    fraction equal to drop_p, so the comparison against the uniform sweep is
-    like-for-like."""
+    """Edges within `hops` of a patient zero are withheld preferentially, at a
+    rate up to `focus`, with the remainder of the budget spread over the rest
+    of the graph so the overall expected drop fraction still equals drop_p.
+
+    `focus` is a CEILING, not the realized rate. The near set is usually large
+    enough that spending the whole budget on it would exceed `focus * n_near`,
+    so the near rate is capped at `budget / n_near` and the far rate falls to
+    roughly zero. Measured over 300 seeds at drop_p=0.15: the cap binds in
+    about 91% of them, giving a mean near-edge rate near 0.6 and a mean
+    far-edge rate near 0.003. The arm is therefore best described as "spend
+    the entire recording budget within `hops` of every patient zero", not as
+    "90% withholding against a benign background".
+
+    Note what this assumes about the adversary. Edges below patient zero are
+    attested by whoever performed those derivations, so an adversary who
+    merely publishes a poisoned artifact cannot withhold them. This models
+    capability 3 - control of derivation pipelines - or an operator concealing
+    their own exposure. It is also not the optimal strategy: an adversary
+    spending the budget on hop-1 edges first, and never on a hop-2 edge below
+    an already-severed hop-1 edge, would do strictly more damage. The measured
+    figure is therefore a lower bound on adversarial impact."""
     child_map = {}
     for rid, rec in records.items():
         for p in rec.parent_ids:

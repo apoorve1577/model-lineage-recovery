@@ -34,7 +34,7 @@ def blast_radius(graph, root_id):
     This is the query: 'if root_id turns out to be compromised, what's
     affected downstream, right now, with what we have on record.'"""
     if root_id not in graph:
-        return set()
+        return set(), 0.0
     start = time.perf_counter()
     affected = nx.descendants(graph, root_id)
     affected.add(root_id)

@@ -1,6 +1,6 @@
 # Blast Radius and Recovery for Compromised AI Model Lineage
 
-**License:** Apache-2.0 · **Status:** research prototype · **Reproduces in ~7s**
+**License:** Apache-2.0 · **Status:** research prototype · **Reproduces in ~13s**
 
 Reference implementation for the paper *Beyond Detection: A Recovery-Oriented
 Architecture for Compromised AI Model Remediation* (preprint in preparation).
@@ -40,62 +40,74 @@ Patient zeros are placed at two structurally different positions: at lineage **r
 
 ## Results
 
-Two evaluations. `evaluate.py` runs a single fully-inspectable case;
-`sweep.py` runs the statistical evaluation the claims rest on. 300 trials per
-condition, 95% confidence intervals, ~11 seconds end to end.
-
-### Detection
-
-| Untracked edges | Recall (95% CI) | False-unrecoverable count | rate (pooled) | rate (mid-chain) |
-|---|---|---|---|---|
-| 0% | 1.000 | 0 | 0.000 | 0.000 |
-| 5% | 0.904 ± 0.010 | 199 | 0.017 | 0.053 |
-| 15% | 0.734 ± 0.015 | 429 | 0.046 | 0.136 |
-| 30% | 0.524 ± 0.015 | 588 | 0.095 | 0.257 |
-| 50% | 0.344 ± 0.013 | 649 | 0.191 | 0.446 |
+`evaluate.py` runs a single fully-inspectable case; `sweep.py` runs the
+statistical evaluation the claims rest on — 300 trials per condition, 95%
+confidence intervals, ~13 seconds end to end.
 
 ![Recall and falsely-unrecoverable verdicts against the fraction of unrecorded lineage edges](figures/degradation.png)
 
 ![Marginal cost of one missing edge, by derivation type](figures/criticality.png)
 
+| Untracked | Recall (95% CI) | False-unrec. count | rate (pooled) | rate (mid-chain) | False-recov. rate |
+|---|---|---|---|---|---|
+| 0% | 1.000 | 0 | 0.000 | 0.000 | 0.000 |
+| 5% | 0.904 ± 0.010 | 199 | 0.017 | 0.053 | 0.014 |
+| 15% | 0.734 ± 0.015 | 437 | 0.047 | 0.139 | 0.031 |
+| 30% | 0.524 ± 0.015 | 589 | 0.096 | 0.258 | 0.050 |
+| 50% | 0.344 ± 0.013 | 656 | 0.193 | 0.451 | 0.076 |
+
 ### The findings
 
-**Plan soundness.** Any rollback target the planner proposes lies outside the
-*true* blast radius, even though the planner only ever sees the incomplete
-graph. Proved, and zero violations across 2,700 trials plus 1,200 stress trials
-at triple merge density. So the planner can be wrong about *whether* recovery is
-possible, but never about whether a rollback it proposes is safe to run.
+**Both planner errors are real, and they trade off against each other.** The
+planner can wrongly say a model cannot be rolled back (*falsely unrecoverable* —
+costly, sends you to retrain unnecessarily) or wrongly say it can (*falsely
+recoverable* — dangerous, the rebuild reintroduces the compromise). The second
+runs at 3.1% of recoverable verdicts at 15% untracked edges, rising to 7.6% at
+50%, and grows with merge density (4.7% → 8.3% as merges per graph go 6 → 20).
 
-**The two error measures disagree.** The falsely-unrecoverable *rate* grows
-superlinearly in the detection miss rate (log-log slope 1.26, bootstrap CI
-[1.11, 1.46]). The *count* grows **sublinearly** (0.655, CI [0.51, 0.84]),
-because the population receiving any verdict collapses from 13,557 to 3,402.
-Cost is about the count. The defensible claim is that a larger *share* of the
-advice an operator receives is wrong, not that the volume of wrong advice grows
-disproportionately.
+**There is a conservative setting that makes the dangerous error provably
+zero.** `recovery_plan(..., strict=True)` also treats the rebuild path's own
+parent as blocking. Under it the falsely-recoverable rate is 0 by construction
+— a `recoverable` verdict is then provably correct — at the cost of precision:
+3.8% of its `blocked` verdicts have every off-path parent clean and could
+safely have proceeded. Precision and provability trade against each other here;
+neither setting dominates.
 
-**The error is structurally confined.** Root patient zeros are half the verdict
-denominator and cannot produce this error at all — no clean ancestor exists
-above a root, so `unrecoverable` is simply true. Pooling dilutes the rate about
-threefold.
+**Rollback targets are always safe, under either setting.** Whatever the
+planner proposes as a rollback target lies outside the *true* blast radius,
+even though the planner only ever sees the incomplete graph. Proved, and zero
+violations in every configuration tested.
 
-**Edge criticality is bimodal.** `merge` (1.367 ± 0.151) and `compose`
-(1.407 ± 0.232) edges cost *more* on average to lose than `fine-tune`
-(1.147 ± 0.052) or `quantize` (1.068 ± 0.070) — while being far more often
-free: 70% and 67% cost nothing at all, against 51% and 53%. Redundant parents
-mean losing one edge usually costs nothing; but a merge reached only through the
-dropped edge takes an aggregated subtree with it.
+**The two measures of the falsely-unrecoverable error disagree.** Its *rate*
+grows superlinearly in the detection miss rate (fitted log-log exponent 1.27,
+bootstrap CI [1.12, 1.46]); its *count* grows **sublinearly** (0.66,
+CI [0.52, 0.84]), because the population receiving any verdict collapses from
+13,557 to 3,402. Cost is about the count.
 
-> An earlier version of this repo reported the opposite — merge edges as 2.8×
-> *cheaper* to lose. That was an artifact of a generator in which merges had no
-> descendants, so a merge edge could not cost more than one node. The flaw was
-> found in external review and is documented in `generate_dataset.py`. It is
-> worth knowing how much a result like this depends on synthetic topology.
+**The error is structurally confined.** Root patient zeros supply about
+two-thirds of the verdict denominator (70% at p=0, 57% at p=0.50) and cannot
+produce this error at all — no clean ancestor exists above a root, so
+`unrecoverable` is simply true. Pooling dilutes the rate roughly threefold.
 
-**Strategic missingness breaks the benign model.** An adversary who withholds
-attestations near patient zero, rather than losing them at random, halves recall
-at an identical budget: **0.338 vs 0.734**. Attestation coverage measured in
-aggregate says nothing about coverage where an adversary chooses to hide.
+**Edge cost is zero-inflated, not bimodal.** Every edge type has one mode at
+zero and a decreasing tail. Separating the two effects: multi-parent and
+composition edges are about *half as likely to cost anything* (70% and 67% cost
+nothing, against 51% and 53%) and about *twice as costly when they do* (mean
+given nonzero: merge 4.55, compose 4.28, against fine-tune 2.34, quantize
+2.25). Redundant parents mean losing one edge usually costs nothing; but a
+merge reached only through the dropped edge takes an aggregated subtree with it.
+
+> An earlier version of this repo reported merge edges as 2.8× *cheaper* to
+> lose. That was an artifact of a generator in which merges had no descendants,
+> so a merge edge could not cost more than one node. The flaw was found in
+> external review and is documented in `generate_dataset.py`.
+
+**Strategic missingness breaks the benign model.** An adversary who spends the
+recording budget withholding attestations within two hops of patient zero,
+rather than losing edges at random, halves recall at an identical budget:
+**0.338 vs 0.734**. This assumes an adversary who controls those derivations
+(capability 3), not merely one who published a poisoned artifact. It is also
+not the optimal strategy, so it is a lower bound on adversarial damage.
 
 **Valid signatures do not mean uncontaminated artifacts.** A signed, unmodified
 LoRA adapter is contaminated through the base model it is served against. The
@@ -120,7 +132,8 @@ python3 -m venv .venv
 | `lineage_graph.py` | DAG construction and blast radius query |
 | `recovery.py` | Recovery planner and ancestor search |
 | `evaluate.py` | Single-case evaluation harness for detection and recovery |
-| `sweep.py` | Statistical evaluation: drop-rate curve, edge criticality, non-uniform missingness, scale |
+| `sweep.py` | Statistical evaluation: drop-rate curve, edge criticality, non-uniform and adversarial missingness, merge-density stress |
+| `make_figures.py` | The two figures, from `results/sweep.json` |
 
 ## Limitations
 
@@ -135,9 +148,13 @@ one team's entire pipeline goes unattested at once, would concentrate loss on
 connected subgraphs and are not modelled. Calibrating any of these against real
 adoption data remains the main open item.
 
-Graph structure comes from one generative model (branching factor, operation mix,
-cross-family merge rate). The scale sweep varies size but not shape, so nothing
-here establishes behaviour on a real registry's topology.
+Graph structure comes from one generative model: branching factor, operation
+mix, and the rate at which merges join branches that share an ancestor (0.35 as
+a parameter, about 21% realized, since generation-1 merges can only be
+cross-family). Nothing here establishes behaviour on a real registry's
+topology, and that is the main threat to these results — model hubs publish
+enough structure that real topology with synthetic missingness is the
+experiment that should replace this one.
 
 Federated learning is handled only at round granularity; per-client attribution
 is out of scope.

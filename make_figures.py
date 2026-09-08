@@ -42,7 +42,6 @@ def fig_degradation(path="figures/degradation.pdf"):
     r_hi = [a + b for a, b in zip(recall, h)]
     fu = [r["false_unrecoverable_rate_pooled"] for r in rows]
     fu_mid = [r["by_pz_position"]["mid-chain"]["fu_rate"] or 0.0 for r in rows]
-    f_lo = f_hi = None
 
     fig, ax = plt.subplots(figsize=(3.35, 2.5))
     ax.set_axisbelow(True)

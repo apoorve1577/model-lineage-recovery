@@ -15,7 +15,8 @@ Five experiments:
                           detection miss rate, with a CI that respects the
                           paired design
 
-TWO METHODOLOGICAL NOTES, both of which were wrong in the 2026-08-30 version.
+TWO METHODOLOGICAL NOTES, both of which an earlier draft of this evaluation
+got wrong.
 
 Common random numbers. Every drop rate reuses trial seeds 1000..1000+N and the
 same drop RNG stream, so the set of edges dropped at p=0.10 is a strict subset
@@ -85,10 +86,11 @@ def trial_metrics(results):
 
     Root patient zeros cannot produce a false-unrecoverable verdict: there is
     no clean ancestor above a root, so the truth is `unrecoverable` too and the
-    tracked verdict cannot be wrong in that direction. They nonetheless
-    contribute to the pooled denominator, which halves the pooled rate relative
-    to the mid-chain population where the error can actually occur. Reporting
-    the pooled figure alone understates the error where it exists.
+    tracked verdict cannot be wrong in that direction. They nonetheless supply
+    about two-thirds of the pooled denominator (70% at p=0, falling to 57% at
+    p=0.50), diluting the pooled rate roughly threefold relative to the
+    mid-chain population where the error can occur at all. Reporting the pooled
+    figure alone understates the error where it exists.
     """
     agg = {"root": defaultdict(int), "mid-chain": defaultdict(int)}
     for r in results:
@@ -99,17 +101,28 @@ def trial_metrics(results):
         a["fp"] += len(r["false_positives"])
         a["fu"] += r["false_unrecoverable_count"]
         a["fr"] += r["false_recoverable_count"]
+        a["fr_strict"] += r["false_recoverable_count_strict"]
+        a["strict_blocked"] += r["strict_blocked_total"]
+        a["strict_relaxable"] += r["strict_blocked_relaxable_count"]
+        a["recoverable"] += r["recovery"]["by_status"].get(
+            "recoverable_by_rollback", 0)
         a["unsound"] += r["unsound_target_count"]
         a["verdicts"] += (r["recovery"]["models_in_blast_radius"]
                           - r["recovery"]["by_status"].get("patient_zero", 0))
 
     tot = {k: sum(agg[p][k] for p in agg)
-           for k in ("true", "fn", "fp", "fu", "fr", "unsound", "verdicts")}
+           for k in ("true", "fn", "fp", "fu", "fr", "fr_strict", "unsound",
+                     "verdicts", "recoverable", "strict_blocked",
+                     "strict_relaxable")}
     return {
         "recall": (tot["true"] - tot["fn"]) / tot["true"] if tot["true"] else 1.0,
         "false_positives": tot["fp"],
         "fu_count": tot["fu"],
         "fr_count": tot["fr"],
+        "fr_count_strict": tot["fr_strict"],
+        "recoverable": tot["recoverable"],
+        "strict_blocked": tot["strict_blocked"],
+        "strict_relaxable": tot["strict_relaxable"],
         "unsound": tot["unsound"],
         "verdicts": tot["verdicts"],
         "true_affected": tot["true"],
@@ -212,14 +225,24 @@ def run_drop_sweep():
             "false_unrecoverable_rate_pooled": round(fu_tot / v_tot, 4) if v_tot else 0.0,
             "verdicts": v_tot,
             "by_pz_position": pooled,
+            "recoverable_verdicts": sum(t["recoverable"] for t in trials),
             "false_recoverable_count": sum(t["fr_count"] for t in trials),
+            "false_recoverable_rate": round(
+                sum(t["fr_count"] for t in trials)
+                / max(1, sum(t["recoverable"] for t in trials)), 4),
+            "false_recoverable_count_strict": sum(t["fr_count_strict"] for t in trials),
+            "strict_blocked_total": sum(t["strict_blocked"] for t in trials),
+            "strict_blocked_relaxable": sum(t["strict_relaxable"] for t in trials),
             "unsound_target_count": sum(t["unsound"] for t in trials),
         })
         r = rows[-1]
         print(f"  p={p:.2f}  recall={m_r:.3f}+/-{h_r:.3f}  "
               f"FU count={fu_tot:>5}  rate={r['false_unrecoverable_rate_pooled']:.4f}  "
               f"(mid-chain only {pooled['mid-chain']['fu_rate']})  "
-              f"FR={r['false_recoverable_count']:>4}  unsound={r['unsound_target_count']}")
+              f"FR={r['false_recoverable_count']:>4}/{r['recoverable_verdicts']:<5}"
+              f"={r['false_recoverable_rate']:.4f}  "
+              f"FR_strict={r['false_recoverable_count_strict']}  "
+              f"unsound={r['unsound_target_count']}")
     return rows, trials_by_p
 
 
@@ -247,15 +270,24 @@ def run_edge_criticality(n_graphs=120):
     for op in ("fine-tune", "quantize", "merge", "compose"):
         v = cost[op]
         m, h = mean_ci(v)
+        nz = [x for x in v if x > 0]
+        m_nz, h_nz = mean_ci(nz) if nz else (0.0, 0.0)
         rows.append({
             "edge_type": op, "n_edges_perturbed": len(v),
             "mean_models_lost_per_missing_edge": round(m, 4),
             "ci95_halfwidth": round(h, 4),
             "fraction_costing_nothing": round(sum(1 for x in v if x == 0) / len(v), 4),
+            # The unconditional mean mixes two effects. These separate them.
+            "conditional_mean_given_nonzero": round(m_nz, 4),
+            "conditional_ci95_halfwidth": round(h_nz, 4),
+            "conditional_median_given_nonzero": (
+                sorted(nz)[len(nz) // 2] if nz else 0),
             "single_parent": op in ("fine-tune", "quantize", "compose"),
         })
-        print(f"  {op:<11} {m:.3f} +/- {h:.3f}   "
-              f"({100 * rows[-1]['fraction_costing_nothing']:.0f}% cost nothing)")
+        r = rows[-1]
+        print(f"  {op:<11} mean {m:.3f}+/-{h:.3f}   "
+              f"{100 * r['fraction_costing_nothing']:.0f}% cost nothing   "
+              f"given nonzero: {m_nz:.2f}+/-{h_nz:.2f} (median {r['conditional_median_given_nonzero']})")
     return rows
 
 
@@ -302,9 +334,50 @@ def run_adversarial(n_trials=N_TRIALS, drop_p=0.15):
             "mean_actual_untracked_fraction": round(sum(actual) / len(actual), 4),
             "recall_mean": round(m_r, 4), "recall_ci95_halfwidth": round(h_r, 4),
             "total_false_positives": sum(t["false_positives"] for t in trials),
+            "mean_near_edge_rate": None,
         })
         print(f"  {label:<16} dropped={rows[-1]['mean_actual_untracked_fraction']:.3f}  "
               f"recall={m_r:.3f} +/- {h_r:.3f}")
+    return rows
+
+
+def run_stress(n_trials=200, drop_p=0.30):
+    """Raise merge density well above the default and re-measure both planner
+    error classes.
+
+    This exists because the symmetric error - the tracked planner calling an
+    artifact recoverable when the truth is blocked - is only reachable when a
+    merge can have two parents affected by the same patient zero. Denser merge
+    graphs make that configuration commoner, so if the error is real it should
+    grow here, and if the planner's soundness property is real it should
+    survive here.
+    """
+    import generate_dataset as gd
+    original = gd.N_MERGES
+    rows = []
+    try:
+        for n_merges in (6, 12, 20):
+            gd.N_MERGES = n_merges
+            trials = [trial_metrics(evaluate_graphs(*build_pair(3000 + i, drop_p)[:2]))
+                      for i in range(n_trials)]
+            rec = sum(t["recoverable"] for t in trials)
+            fr = sum(t["fr_count"] for t in trials)
+            rows.append({
+                "n_merges": n_merges,
+                "n_trials": n_trials,
+                "drop_p": drop_p,
+                "recoverable_verdicts": rec,
+                "false_recoverable_count": fr,
+                "false_recoverable_rate": round(fr / max(1, rec), 4),
+                "false_recoverable_count_strict": sum(t["fr_count_strict"] for t in trials),
+                "unsound_target_count": sum(t["unsound"] for t in trials),
+            })
+            print(f"  merges={n_merges:>3}  recoverable={rec:>5}  "
+                  f"FR={fr:>4} ({rows[-1]['false_recoverable_rate']:.4f})  "
+                  f"FR_strict={rows[-1]['false_recoverable_count_strict']}  "
+                  f"unsound={rows[-1]['unsound_target_count']}")
+    finally:
+        gd.N_MERGES = original
     return rows
 
 
@@ -328,12 +401,19 @@ if __name__ == "__main__":
     print(f"\nADVERSARIAL MISSINGNESS ({N_TRIALS} trials, both ~15% dropped)\n")
     adversarial_rows = run_adversarial()
 
+    print("\nMERGE-DENSITY STRESS (does the symmetric error grow, "
+          "and does plan soundness survive?)\n")
+    stress_rows = run_stress()
+
     zero = next(r for r in drop_rows if r["drop_p"] == 0.0)
     checks = {
         "recall_is_exactly_1_at_zero_drop": zero["recall_mean"] == 1.0,
         "no_false_unrecoverable_at_zero_drop": zero["false_unrecoverable_count"] == 0,
         "no_false_positives_anywhere": all(
-            r["total_false_positives"] == 0 for r in drop_rows + scenario_rows),
+            r["total_false_positives"] == 0
+            for r in drop_rows + scenario_rows + adversarial_rows),
+        "no_unsound_rollback_targets_anywhere": all(
+            r["unsound_target_count"] == 0 for r in drop_rows + stress_rows),
         "root_pz_never_false_unrecoverable": all(
             r["by_pz_position"]["root"]["fu_count"] == 0 for r in drop_rows),
     }
@@ -348,5 +428,6 @@ if __name__ == "__main__":
                    "edge_criticality": criticality_rows,
                    "non_uniform_missingness_sweep": scenario_rows,
                    "adversarial_missingness": adversarial_rows,
+                   "merge_density_stress": stress_rows,
                    "harness_assertions": checks}, f, indent=2)
     print("\nWrote results/sweep.json")

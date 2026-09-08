@@ -65,6 +65,24 @@ def evaluate_graphs(true_graph, tracked_graph):
                 "unrecoverable_by_rollback", "blocked_on_compromised_merge_parent")
         ]
 
+        # Both classifications also computed under the conservative rule, so
+        # the precision cost of provability can be reported rather than
+        # asserted.
+        strict_plans = recovery_plan(tracked_graph, pz, tracked_affected, strict=True)
+        strict_status = {p["model"]: p["status"] for p in strict_plans}
+        strict_blocked_relaxable = [
+            m for m, st in strict_status.items()
+            if st == "blocked_on_compromised_merge_parent"
+            and {p["model"]: p["status"] for p in plans}.get(m)
+            == "recoverable_by_rollback"
+        ]
+        false_recoverable_strict = [
+            p["model"] for p in strict_plans
+            if p["status"] == "recoverable_by_rollback"
+            and true_status.get(p["model"]) in (
+                "unrecoverable_by_rollback", "blocked_on_compromised_merge_parent")
+        ]
+
         # Planner soundness: whenever the tracked planner proposes a rollback
         # target, is that target genuinely outside the TRUE blast radius? A
         # violation means the plan rebuilds from something itself compromised.
@@ -90,6 +108,11 @@ def evaluate_graphs(true_graph, tracked_graph):
             "false_unrecoverable_count": len(false_unrecoverable),
             "false_recoverable": false_recoverable,
             "false_recoverable_count": len(false_recoverable),
+            "false_recoverable_count_strict": len(false_recoverable_strict),
+            "strict_blocked_relaxable_count": len(strict_blocked_relaxable),
+            "strict_blocked_total": sum(
+                1 for st in strict_status.values()
+                if st == "blocked_on_compromised_merge_parent"),
             "unsound_targets": unsound_targets,
             "unsound_target_count": len(unsound_targets),
             "recovery_plans": plans,
@@ -126,6 +149,8 @@ def summarize(results):
         "recovery_by_pz_position": {k: dict(v) for k, v in by_position.items()},
         "total_false_unrecoverable": sum(r["false_unrecoverable_count"] for r in results),
         "total_false_recoverable": sum(r["false_recoverable_count"] for r in results),
+        "total_false_recoverable_strict": sum(
+            r["false_recoverable_count_strict"] for r in results),
         "total_unsound_targets": sum(r["unsound_target_count"] for r in results),
     }
 

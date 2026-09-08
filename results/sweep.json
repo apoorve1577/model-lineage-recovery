@@ -21,7 +21,12 @@
           "fu_rate": 0.0
         }
       },
+      "recoverable_verdicts": 3538,
       "false_recoverable_count": 0,
+      "false_recoverable_rate": 0.0,
+      "false_recoverable_count_strict": 0,
+      "strict_blocked_total": 4511,
+      "strict_blocked_relaxable": 46,
       "unsound_target_count": 0
     },
     {
@@ -45,7 +50,12 @@
           "fu_rate": 0.0527
         }
       },
-      "false_recoverable_count": 0,
+      "recoverable_verdicts": 3107,
+      "false_recoverable_count": 44,
+      "false_recoverable_rate": 0.0142,
+      "false_recoverable_count_strict": 0,
+      "strict_blocked_total": 3769,
+      "strict_blocked_relaxable": 79,
       "unsound_target_count": 0
     },
     {
@@ -69,7 +79,12 @@
           "fu_rate": 0.0852
         }
       },
-      "false_recoverable_count": 0,
+      "recoverable_verdicts": 2751,
+      "false_recoverable_count": 50,
+      "false_recoverable_rate": 0.0182,
+      "false_recoverable_count_strict": 0,
+      "strict_blocked_total": 3179,
+      "strict_blocked_relaxable": 78,
       "unsound_target_count": 0
     },
     {
@@ -78,8 +93,8 @@
       "recall_mean": 0.7341,
       "recall_ci95_halfwidth": 0.0152,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 429,
-      "false_unrecoverable_rate_pooled": 0.0458,
+      "false_unrecoverable_count": 437,
+      "false_unrecoverable_rate_pooled": 0.0466,
       "verdicts": 9372,
       "by_pz_position": {
         "root": {
@@ -88,12 +103,17 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 429,
+          "fu_count": 437,
           "verdicts": 3151,
-          "fu_rate": 0.1361
+          "fu_rate": 0.1387
         }
       },
-      "false_recoverable_count": 0,
+      "recoverable_verdicts": 2382,
+      "false_recoverable_count": 73,
+      "false_recoverable_rate": 0.0306,
+      "false_recoverable_count_strict": 0,
+      "strict_blocked_total": 2584,
+      "strict_blocked_relaxable": 97,
       "unsound_target_count": 0
     },
     {
@@ -102,8 +122,8 @@
       "recall_mean": 0.6565,
       "recall_ci95_halfwidth": 0.0162,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 510,
-      "false_unrecoverable_rate_pooled": 0.0624,
+      "false_unrecoverable_count": 518,
+      "false_unrecoverable_rate_pooled": 0.0634,
       "verdicts": 8169,
       "by_pz_position": {
         "root": {
@@ -112,12 +132,17 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 510,
+          "fu_count": 518,
           "verdicts": 2836,
-          "fu_rate": 0.1798
+          "fu_rate": 0.1827
         }
       },
-      "false_recoverable_count": 0,
+      "recoverable_verdicts": 2031,
+      "false_recoverable_count": 83,
+      "false_recoverable_rate": 0.0409,
+      "false_recoverable_count_strict": 0,
+      "strict_blocked_total": 2111,
+      "strict_blocked_relaxable": 106,
       "unsound_target_count": 0
     },
     {
@@ -126,8 +151,8 @@
       "recall_mean": 0.5917,
       "recall_ci95_halfwidth": 0.016,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 573,
-      "false_unrecoverable_rate_pooled": 0.0796,
+      "false_unrecoverable_count": 581,
+      "false_unrecoverable_rate_pooled": 0.0807,
       "verdicts": 7199,
       "by_pz_position": {
         "root": {
@@ -136,12 +161,17 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 573,
+          "fu_count": 581,
           "verdicts": 2573,
-          "fu_rate": 0.2227
+          "fu_rate": 0.2258
         }
       },
-      "false_recoverable_count": 0,
+      "recoverable_verdicts": 1737,
+      "false_recoverable_count": 84,
+      "false_recoverable_rate": 0.0484,
+      "false_recoverable_count_strict": 0,
+      "strict_blocked_total": 1741,
+      "strict_blocked_relaxable": 107,
       "unsound_target_count": 0
     },
     {
@@ -150,8 +180,8 @@
       "recall_mean": 0.5243,
       "recall_ci95_halfwidth": 0.0153,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 588,
-      "false_unrecoverable_rate_pooled": 0.0954,
+      "false_unrecoverable_count": 589,
+      "false_unrecoverable_rate_pooled": 0.0955,
       "verdicts": 6166,
       "by_pz_position": {
         "root": {
@@ -160,12 +190,17 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 588,
+          "fu_count": 589,
           "verdicts": 2285,
-          "fu_rate": 0.2573
+          "fu_rate": 0.2578
         }
       },
-      "false_recoverable_count": 0,
+      "recoverable_verdicts": 1476,
+      "false_recoverable_count": 74,
+      "false_recoverable_rate": 0.0501,
+      "false_recoverable_count_strict": 0,
+      "strict_blocked_total": 1401,
+      "strict_blocked_relaxable": 92,
       "unsound_target_count": 0
     },
     {
@@ -174,8 +209,8 @@
       "recall_mean": 0.4243,
       "recall_ci95_halfwidth": 0.0139,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 634,
-      "false_unrecoverable_rate_pooled": 0.1362,
+      "false_unrecoverable_count": 637,
+      "false_unrecoverable_rate_pooled": 0.1368,
       "verdicts": 4655,
       "by_pz_position": {
         "root": {
@@ -184,12 +219,17 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 634,
+          "fu_count": 637,
           "verdicts": 1816,
-          "fu_rate": 0.3491
+          "fu_rate": 0.3508
         }
       },
-      "false_recoverable_count": 0,
+      "recoverable_verdicts": 1025,
+      "false_recoverable_count": 67,
+      "false_recoverable_rate": 0.0654,
+      "false_recoverable_count_strict": 0,
+      "strict_blocked_total": 857,
+      "strict_blocked_relaxable": 74,
       "unsound_target_count": 0
     },
     {
@@ -198,8 +238,8 @@
       "recall_mean": 0.3441,
       "recall_ci95_halfwidth": 0.0131,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 649,
-      "false_unrecoverable_rate_pooled": 0.1908,
+      "false_unrecoverable_count": 656,
+      "false_unrecoverable_rate_pooled": 0.1928,
       "verdicts": 3402,
       "by_pz_position": {
         "root": {
@@ -208,29 +248,34 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 649,
+          "fu_count": 656,
           "verdicts": 1456,
-          "fu_rate": 0.4457
+          "fu_rate": 0.4505
         }
       },
-      "false_recoverable_count": 0,
+      "recoverable_verdicts": 697,
+      "false_recoverable_count": 53,
+      "false_recoverable_rate": 0.076,
+      "false_recoverable_count_strict": 0,
+      "strict_blocked_total": 556,
+      "strict_blocked_relaxable": 57,
       "unsound_target_count": 0
     }
   ],
   "slopes": {
     "rate": {
-      "slope": 1.2641,
+      "slope": 1.2683,
       "ci95": [
-        1.1123,
-        1.4576
+        1.1162,
+        1.4612
       ],
       "n_bootstrap": 2000
     },
     "count": {
-      "slope": 0.6547,
+      "slope": 0.6589,
       "ci95": [
-        0.5097,
-        0.8398
+        0.5158,
+        0.8425
       ],
       "n_bootstrap": 2000
     }
@@ -242,6 +287,9 @@
       "mean_models_lost_per_missing_edge": 1.1469,
       "ci95_halfwidth": 0.0519,
       "fraction_costing_nothing": 0.5102,
+      "conditional_mean_given_nonzero": 2.3417,
+      "conditional_ci95_halfwidth": 0.0877,
+      "conditional_median_given_nonzero": 1,
       "single_parent": true
     },
     {
@@ -250,6 +298,9 @@
       "mean_models_lost_per_missing_edge": 1.0682,
       "ci95_halfwidth": 0.0702,
       "fraction_costing_nothing": 0.5254,
+      "conditional_mean_given_nonzero": 2.2508,
+      "conditional_ci95_halfwidth": 0.1178,
+      "conditional_median_given_nonzero": 1,
       "single_parent": true
     },
     {
@@ -258,6 +309,9 @@
       "mean_models_lost_per_missing_edge": 1.3674,
       "ci95_halfwidth": 0.1509,
       "fraction_costing_nothing": 0.6993,
+      "conditional_mean_given_nonzero": 4.5473,
+      "conditional_ci95_halfwidth": 0.3516,
+      "conditional_median_given_nonzero": 3,
       "single_parent": false
     },
     {
@@ -266,6 +320,9 @@
       "mean_models_lost_per_missing_edge": 1.4067,
       "ci95_halfwidth": 0.2317,
       "fraction_costing_nothing": 0.6717,
+      "conditional_mean_given_nonzero": 4.2843,
+      "conditional_ci95_halfwidth": 0.5078,
+      "conditional_median_given_nonzero": 3,
       "single_parent": true
     }
   ],
@@ -281,53 +338,53 @@
       "mean_actual_untracked_fraction": 0.152,
       "recall_mean": 0.7341,
       "recall_ci95_halfwidth": 0.0152,
-      "false_unrecoverable_count": 429,
-      "false_unrecoverable_rate": 0.0458,
+      "false_unrecoverable_count": 437,
+      "false_unrecoverable_rate": 0.0466,
       "total_false_positives": 0
     },
     {
       "scenario": "routine_ops_underreported",
       "per_operation_drop_rates": {
-        "fine-tune": 0.08,
+        "fine-tune": 0.0633,
         "quantize": 0.35,
-        "merge": 0.05,
+        "merge": 0.0633,
         "compose": 0.35
       },
-      "mean_actual_untracked_fraction": 0.1594,
-      "recall_mean": 0.7257,
+      "mean_actual_untracked_fraction": 0.1521,
+      "recall_mean": 0.7323,
       "recall_ci95_halfwidth": 0.0147,
-      "false_unrecoverable_count": 466,
-      "false_unrecoverable_rate": 0.0503,
+      "false_unrecoverable_count": 458,
+      "false_unrecoverable_rate": 0.0489,
       "total_false_positives": 0
     },
     {
       "scenario": "deliberate_ops_underreported",
       "per_operation_drop_rates": {
-        "fine-tune": 0.13,
-        "quantize": 0.02,
-        "merge": 0.4,
-        "compose": 0.02
+        "fine-tune": 0.14,
+        "quantize": 0.04,
+        "merge": 0.45,
+        "compose": 0.04
       },
-      "mean_actual_untracked_fraction": 0.1323,
-      "recall_mean": 0.7518,
-      "recall_ci95_halfwidth": 0.0158,
-      "false_unrecoverable_count": 268,
-      "false_unrecoverable_rate": 0.0278,
+      "mean_actual_untracked_fraction": 0.1506,
+      "recall_mean": 0.7211,
+      "recall_ci95_halfwidth": 0.0165,
+      "false_unrecoverable_count": 326,
+      "false_unrecoverable_rate": 0.0355,
       "total_false_positives": 0
     },
     {
       "scenario": "composition_blind_spot",
       "per_operation_drop_rates": {
-        "fine-tune": 0.0935,
-        "quantize": 0.0935,
-        "merge": 0.0935,
+        "fine-tune": 0.1122,
+        "quantize": 0.1122,
+        "merge": 0.1122,
         "compose": 0.8
       },
-      "mean_actual_untracked_fraction": 0.1346,
-      "recall_mean": 0.7435,
-      "recall_ci95_halfwidth": 0.0149,
-      "false_unrecoverable_count": 560,
-      "false_unrecoverable_rate": 0.0588,
+      "mean_actual_untracked_fraction": 0.1525,
+      "recall_mean": 0.719,
+      "recall_ci95_halfwidth": 0.0153,
+      "false_unrecoverable_count": 589,
+      "false_unrecoverable_rate": 0.0645,
       "total_false_positives": 0
     }
   ],
@@ -337,20 +394,55 @@
       "mean_actual_untracked_fraction": 0.152,
       "recall_mean": 0.7341,
       "recall_ci95_halfwidth": 0.0152,
-      "total_false_positives": 0
+      "total_false_positives": 0,
+      "mean_near_edge_rate": null
     },
     {
       "missingness": "adversarial",
       "mean_actual_untracked_fraction": 0.1484,
       "recall_mean": 0.3379,
       "recall_ci95_halfwidth": 0.0167,
-      "total_false_positives": 0
+      "total_false_positives": 0,
+      "mean_near_edge_rate": null
+    }
+  ],
+  "merge_density_stress": [
+    {
+      "n_merges": 6,
+      "n_trials": 200,
+      "drop_p": 0.3,
+      "recoverable_verdicts": 1095,
+      "false_recoverable_count": 51,
+      "false_recoverable_rate": 0.0466,
+      "false_recoverable_count_strict": 0,
+      "unsound_target_count": 0
+    },
+    {
+      "n_merges": 12,
+      "n_trials": 200,
+      "drop_p": 0.3,
+      "recoverable_verdicts": 1000,
+      "false_recoverable_count": 81,
+      "false_recoverable_rate": 0.081,
+      "false_recoverable_count_strict": 0,
+      "unsound_target_count": 0
+    },
+    {
+      "n_merges": 20,
+      "n_trials": 200,
+      "drop_p": 0.3,
+      "recoverable_verdicts": 1043,
+      "false_recoverable_count": 86,
+      "false_recoverable_rate": 0.0825,
+      "false_recoverable_count_strict": 0,
+      "unsound_target_count": 0
     }
   ],
   "harness_assertions": {
     "recall_is_exactly_1_at_zero_drop": true,
     "no_false_unrecoverable_at_zero_drop": true,
     "no_false_positives_anywhere": true,
+    "no_unsound_rollback_targets_anywhere": true,
     "root_pz_never_false_unrecoverable": true
   }
 }

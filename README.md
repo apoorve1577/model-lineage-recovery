@@ -88,23 +88,27 @@ even though the planner only ever sees the incomplete graph. Proved, and zero
 violations in every configuration tested.
 
 **The two measures of the falsely-unrecoverable error disagree.** Its *rate*
-grows superlinearly in the detection miss rate (fitted log-log exponent 1.27,
-bootstrap CI [1.12, 1.46]); its *count* grows **sublinearly** (0.66,
-CI [0.52, 0.84]), because the population receiving any verdict collapses from
-13,557 to 3,402. Cost is about the count.
+grows superlinearly in the detection miss rate (fitted log-log exponent 1.30,
+bootstrap CI [1.12, 1.51]); its *count* grows **sublinearly** (0.68,
+CI [0.52, 0.88]), because the population receiving any verdict collapses from
+13,435 to 3,340. Cost is about the count.
 
 **The error is structurally confined.** Root patient zeros supply about
-two-thirds of the verdict denominator (70% at p=0, 57% at p=0.50) and cannot
+two-thirds of the verdict denominator (70% at p=0, 58% at p=0.50) and cannot
 produce this error at all — no clean ancestor exists above a root, so
 `unrecoverable` is simply true. Pooling dilutes the rate roughly threefold.
 
 **Edge cost is zero-inflated, not bimodal.** Every edge type has one mode at
 zero and a decreasing tail. Separating the two effects: multi-parent and
-composition edges are about *half as likely to cost anything* (70% and 67% cost
-nothing, against 51% and 53%) and about *twice as costly when they do* (mean
-given nonzero: merge 4.55, compose 4.28, against fine-tune 2.34, quantize
-2.25). Redundant parents mean losing one edge usually costs nothing; but a
-merge reached only through the dropped edge takes an aggregated subtree with it.
+composition edges are about *half as likely to cost anything*
+(70% and 66% cost nothing, against 51% and 52%) and about
+*twice as costly when they do* (mean given nonzero: merge 4.52, compose
+4.28, against fine-tune 2.33, quantize 2.24).
+
+> Most of that zero mass is not parent redundancy. Of 1,014 zero-cost merge
+> deletions, 935 have a parent not exposed to any sampled incident at all and
+> only 79 are alternate-path cases. The ablation deletes every edge in the
+> graph, most of which are irrelevant to the incidents sampled.
 
 > Two corrections here. An earlier version reported merge edges as 2.8x
 > *cheaper* to lose — an artifact of a generator in which merges had no

@@ -89,7 +89,7 @@ def trial_metrics(results):
     Root patient zeros cannot produce a false-unrecoverable verdict: there is
     no clean ancestor above a root, so the truth is `unrecoverable` too and the
     tracked verdict cannot be wrong in that direction. They nonetheless supply
-    about two-thirds of the pooled denominator (70% at p=0, falling to 57% at
+    about two-thirds of the pooled denominator (70% at p=0, falling to 58% at
     p=0.50), diluting the pooled rate roughly threefold relative to the
     mid-chain population where the error can occur at all. Reporting the pooled
     figure alone understates the error where it exists.

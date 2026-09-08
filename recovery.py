@@ -102,7 +102,7 @@ def recovery_plan(graph, patient_zero, affected, strict=False):
         # guarantee that a `recoverable` verdict is never wrong (a path with no
         # merge-typed node inside the blast radius has in-degree 1 throughout,
         # so the true planner walks the same path and returns the same answer).
-        # The precision cost is real - at 15% untracked edges, 3.8% of strict
+        # The precision cost is real - at 15% untracked edges, 3.2% of strict
         # `blocked` verdicts have every off-path parent clean - so the two
         # settings trade precision against provability rather than one
         # dominating the other.

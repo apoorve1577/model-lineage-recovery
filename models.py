@@ -12,7 +12,9 @@ from typing import List
 
 VALID_OPERATIONS = {"root", "fine-tune", "quantize", "merge", "compose"}
 
-# Whether an operation preserves the model's learned behaviour.
+# Whether an operation is INTENDED to preserve the model's learned behaviour.
+# Approximate and method-dependent, and a statement about utility, not safety:
+# a quantization can introduce behaviour its parent did not have.
 SEMANTICALLY_PRESERVING = {
     "root": False,
     "fine-tune": False,
@@ -21,18 +23,22 @@ SEMANTICALLY_PRESERVING = {
     "compose": False,   # an adapter deliberately changes behaviour
 }
 
-# Whether a derivation can be replayed without retraining. This is what
-# makes recovery cost asymmetric, and it is deliberately NOT the same set
-# as SEMANTICALLY_PRESERVING. Re-composing a LoRA adapter against a clean
-# base changes behaviour relative to the base, yet costs nothing to redo:
-# the adapter itself was never the compromised artifact.
-CHEAP_TO_REBUILD = {"quantize", "compose"}
+# Whether the DERIVATION STEP can be replayed without training, given clean
+# inputs. This is deliberately NOT the same set as SEMANTICALLY_PRESERVING, and
+# it is a property of the step alone: rebuilding a compromised PARENT may still
+# require training, but that cost belongs to the parent's own edge, not to this
+# one. Merging is in this set because standard weight averaging and most
+# adapter-merging methods combine existing weights without any training; only
+# fine-tuning inherently requires it.
+CHEAP_TO_REBUILD = {"quantize", "compose", "merge"}
 
 REBUILD_COST = {
-    "quantize": "cheap: re-derive deterministically from clean parent",
-    "compose": "cheap: re-serve the existing adapter against a clean base, no retraining",
+    "quantize": "cheap: re-derive from a clean parent; determinism depends on "
+                "method, configuration and environment",
+    "compose": "cheap: re-serve the adapter against a clean base, no training",
+    "merge": "cheap to re-execute: combines existing weights without training. "
+             "Cost lies in obtaining clean parents, not in the merge itself",
     "fine-tune": "expensive: retraining required",
-    "merge": "expensive: re-merge, and every parent must be clean first",
     "root": "not applicable: no parent to rebuild from",
 }
 

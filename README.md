@@ -48,30 +48,37 @@ confidence intervals, ~13 seconds end to end.
 
 ![Marginal cost of one missing edge, by derivation type](figures/criticality.png)
 
-| Untracked | Recall (95% CI) | False-unrec. count | rate (pooled) | rate (mid-chain) | False-recov. rate |
+| Untracked | Recall (95% CI) | False-unrec. count | rate (pooled) | rate (mid-chain) | Unsafe plans |
 |---|---|---|---|---|---|
-| 0% | 1.000 | 0 | 0.000 | 0.000 | 0.000 |
-| 5% | 0.904 ± 0.010 | 199 | 0.017 | 0.053 | 0.014 |
-| 15% | 0.734 ± 0.015 | 437 | 0.047 | 0.139 | 0.031 |
-| 30% | 0.524 ± 0.015 | 589 | 0.096 | 0.258 | 0.050 |
-| 50% | 0.344 ± 0.013 | 656 | 0.193 | 0.451 | 0.076 |
+| 0% | 1.000 | 0 | 0.000 | 0.000 | 0 |
+| 5% | 0.903 ± 0.011 | 179 | 0.015 | 0.049 | 0 |
+| 15% | 0.734 ± 0.015 | 408 | 0.044 | 0.133 | 0 |
+| 30% | 0.525 ± 0.015 | 547 | 0.089 | 0.244 | 1 |
+| 50% | 0.344 ± 0.013 | 592 | 0.177 | 0.425 | 1 |
 
 ### The findings
 
-**Both planner errors are real, and they trade off against each other.** The
-planner can wrongly say a model cannot be rolled back (*falsely unrecoverable* —
-costly, sends you to retrain unnecessarily) or wrongly say it can (*falsely
-recoverable* — dangerous, the rebuild reintroduces the compromise). The second
-runs at 3.1% of recoverable verdicts at 15% untracked edges, rising to 7.6% at
-50%, and grows with merge density (4.7% → 8.3% as merges per graph go 6 → 20).
+**Proposed plans essentially never reuse a compromised input.** The dangerous
+error is a plan that says "roll back" when executing it would reintroduce the
+compromise. Measured by walking each proposed rebuild path against true
+dependencies: **zero** occurrences up to 15% unrecorded edges, and one per
+condition from 20% to 50%, against populations of 704 to 3,499 recoverable
+verdicts.
 
-**There is a conservative setting that makes the dangerous error provably
-zero.** `recovery_plan(..., strict=True)` also treats the rebuild path's own
-parent as blocking. Under it the falsely-recoverable rate is 0 by construction
-— a `recoverable` verdict is then provably correct — at the cost of precision:
-3.8% of its `blocked` verdicts have every off-path parent clean and could
-safely have proceeded. Precision and provability trade against each other here;
-neither setting dominates.
+> An earlier version of this repo reported this error as 3.1%. That number
+> compared the tracked planner's verdict against a *full-graph planner's
+> independently chosen* plan. The two select targets independently, so
+> restoring a hidden edge can send the full-graph planner to a different,
+> nearer target that happens to be blocked — which says nothing about whether
+> the plan actually proposed is safe. That quantity is now reported separately
+> as *verdict disagreement* (2.4% at 15%, 6.4% at 50%), which is what it is.
+
+**A conservative setting makes it provable rather than merely observed.**
+`recovery_plan(..., strict=True)` also treats the rebuild path's own parent as
+blocking, under which a `recoverable` verdict is provably correct. It costs
+precision: 3.8% of its `blocked` verdicts have every off-path parent clean.
+The precise rule gives that guarantee up and turns out to be safe anyway on
+these graphs.
 
 **Rollback targets are always safe, under either setting.** Whatever the
 planner proposes as a rollback target lies outside the *true* blast radius,
@@ -97,21 +104,30 @@ given nonzero: merge 4.55, compose 4.28, against fine-tune 2.34, quantize
 2.25). Redundant parents mean losing one edge usually costs nothing; but a
 merge reached only through the dropped edge takes an aggregated subtree with it.
 
-> An earlier version of this repo reported merge edges as 2.8× *cheaper* to
-> lose. That was an artifact of a generator in which merges had no descendants,
-> so a merge edge could not cost more than one node. The flaw was found in
-> external review and is documented in `generate_dataset.py`.
+> Two corrections here. An earlier version reported merge edges as 2.8x
+> *cheaper* to lose — an artifact of a generator in which merges had no
+> descendants. And the explanation for why so many edges cost nothing was wrong:
+> of 1,014 zero-cost merge deletions, 935 have a parent not exposed to any
+> sampled incident at all, and only 79 are alternate-path cases. The ablation
+> deletes every edge in the graph, most of which are irrelevant to the sampled
+> incidents; that irrelevance, not parent redundancy, is most of the zero mass.
 
 **Strategic missingness breaks the benign model.** An adversary who spends the
 recording budget withholding attestations within two hops of patient zero,
 rather than losing edges at random, halves recall at an identical budget:
-**0.338 vs 0.734**. This assumes an adversary who controls those derivations
+**0.325 vs 0.734**. This assumes an adversary who controls those derivations
 (capability 3), not merely one who published a poisoned artifact. It is also
 not the optimal strategy, so it is a lower bound on adversarial damage.
 
 **Valid signatures do not mean uncontaminated artifacts.** A signed, unmodified
 LoRA adapter is contaminated through the base model it is served against. The
 deployed model is base plus adapter; only the adapter was signed.
+
+> Scope: a `compose` node carries one parent, so this model cannot represent a
+> deployment as depending on both base and adapter, and cannot represent an
+> independently poisoned adapter. Incidents are therefore restricted to
+> base-only compromise. An earlier version made an adapter a patient zero and
+> emitted plans telling an operator to re-serve the compromised artifact.
 
 ## Running it
 

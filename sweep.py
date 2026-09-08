@@ -104,6 +104,7 @@ def trial_metrics(results):
         a["fu"] += r["false_unrecoverable_count"]
         a["fr"] += r["false_recoverable_count"]
         a["fr_strict"] += r["false_recoverable_count_strict"]
+        a["unsafe"] += r["unsafe_plan_count"]
         a["strict_blocked"] += r["strict_blocked_total"]
         a["strict_relaxable"] += r["strict_blocked_relaxable_count"]
         a["recoverable"] += r["recovery"]["by_status"].get(
@@ -115,13 +116,14 @@ def trial_metrics(results):
     tot = {k: sum(agg[p][k] for p in agg)
            for k in ("true", "fn", "fp", "fu", "fr", "fr_strict", "unsound",
                      "verdicts", "recoverable", "strict_blocked",
-                     "strict_relaxable")}
+                     "strict_relaxable", "unsafe")}
     return {
         "recall": (tot["true"] - tot["fn"]) / tot["true"] if tot["true"] else 1.0,
         "false_positives": tot["fp"],
         "fu_count": tot["fu"],
         "fr_count": tot["fr"],
         "fr_count_strict": tot["fr_strict"],
+        "unsafe_plans": tot["unsafe"],
         "recoverable": tot["recoverable"],
         "strict_blocked": tot["strict_blocked"],
         "strict_relaxable": tot["strict_relaxable"],
@@ -228,11 +230,21 @@ def run_drop_sweep():
             "verdicts": v_tot,
             "by_pz_position": pooled,
             "recoverable_verdicts": sum(t["recoverable"] for t in trials),
-            "false_recoverable_count": sum(t["fr_count"] for t in trials),
-            "false_recoverable_rate": round(
+            # NOT an unsafety rate. The tracked and full-graph planners select
+            # targets independently, so an added edge can make the full-graph
+            # planner choose a different, nearer target whose plan happens to
+            # be blocked. That is disagreement, not danger. `unsafe_plan_*`
+            # below is the quantity that answers "does the proposed plan reuse
+            # a compromised input".
+            "verdict_disagreement_count": sum(t["fr_count"] for t in trials),
+            "verdict_disagreement_rate": round(
                 sum(t["fr_count"] for t in trials)
                 / max(1, sum(t["recoverable"] for t in trials)), 4),
             "false_recoverable_count_strict": sum(t["fr_count_strict"] for t in trials),
+            "unsafe_plan_count": sum(t["unsafe_plans"] for t in trials),
+            "unsafe_plan_rate": round(
+                sum(t["unsafe_plans"] for t in trials)
+                / max(1, sum(t["recoverable"] for t in trials)), 5),
             "strict_blocked_total": sum(t["strict_blocked"] for t in trials),
             "strict_blocked_relaxable": sum(t["strict_relaxable"] for t in trials),
             "unsound_target_count": sum(t["unsound"] for t in trials),
@@ -241,9 +253,9 @@ def run_drop_sweep():
         print(f"  p={p:.2f}  recall={m_r:.3f}+/-{h_r:.3f}  "
               f"FU count={fu_tot:>5}  rate={r['false_unrecoverable_rate_pooled']:.4f}  "
               f"(mid-chain only {pooled['mid-chain']['fu_rate']})  "
-              f"FR={r['false_recoverable_count']:>4}/{r['recoverable_verdicts']:<5}"
-              f"={r['false_recoverable_rate']:.4f}  "
-              f"FR_strict={r['false_recoverable_count_strict']}  "
+              f"disagree={r['verdict_disagreement_count']:>3}/{r['recoverable_verdicts']:<5}"
+              f"={r['verdict_disagreement_rate']:.4f}  "
+              f"UNSAFE={r['unsafe_plan_count']:>3}  "
               f"unsound={r['unsound_target_count']}")
     return rows, trials_by_p
 
@@ -253,20 +265,31 @@ def run_edge_criticality(n_graphs=120):
     Now meaningful: merge and compose nodes have descendants, so a multi-parent
     edge is no longer capped at one node by construction."""
     cost = defaultdict(list)
+    # Why an edge costs nothing: because its parent is not exposed to any
+    # sampled incident at all, or because an alternate path still reaches the
+    # child. Only the second is the redundancy story.
+    zero_out_of_scope = defaultdict(int)
+    zero_alternate_path = defaultdict(int)
     for seed in range(1000, 1000 + n_graphs):
         records = generate(seed=seed)
         recs = {rid: r.to_dict() for rid, r in records.items()}
         full = graph_from_records(recs)
         pzs = [n for n, a in full.nodes(data=True) if a.get("is_patient_zero")]
         base = {pz: blast_radius(full, pz)[0] for pz in pzs}
+        exposed = set().union(*base.values()) if base else set()
         for rid, r in records.items():
             for par in r.parent_ids:
                 perturbed = {k: dict(v) for k, v in recs.items()}
                 perturbed[rid]["parent_ids"] = [
                     x for x in recs[rid]["parent_ids"] if x != par]
                 g2 = graph_from_records(perturbed)
-                cost[r.operation].append(
-                    sum(len(base[pz] - blast_radius(g2, pz)[0]) for pz in pzs))
+                lost = sum(len(base[pz] - blast_radius(g2, pz)[0]) for pz in pzs)
+                cost[r.operation].append(lost)
+                if lost == 0:
+                    if par not in exposed:
+                        zero_out_of_scope[r.operation] += 1
+                    else:
+                        zero_alternate_path[r.operation] += 1
 
     rows = []
     for op in ("fine-tune", "quantize", "merge", "compose"):
@@ -285,11 +308,15 @@ def run_edge_criticality(n_graphs=120):
             "conditional_median_given_nonzero": (
                 sorted(nz)[len(nz) // 2] if nz else 0),
             "single_parent": op in ("fine-tune", "quantize", "compose"),
+            "zero_because_parent_unexposed": zero_out_of_scope[op],
+            "zero_despite_exposed_parent": zero_alternate_path[op],
         })
         r = rows[-1]
         print(f"  {op:<11} mean {m:.3f}+/-{h:.3f}   "
               f"{100 * r['fraction_costing_nothing']:.0f}% cost nothing   "
-              f"given nonzero: {m_nz:.2f}+/-{h_nz:.2f} (median {r['conditional_median_given_nonzero']})")
+              f"given nonzero: {m_nz:.2f} (median {r['conditional_median_given_nonzero']})   "
+              f"zeros: {r['zero_because_parent_unexposed']} unexposed / "
+              f"{r['zero_despite_exposed_parent']} alternate-path")
     return rows
 
 
@@ -368,14 +395,18 @@ def run_stress(n_trials=200, drop_p=0.30):
                 "n_trials": n_trials,
                 "drop_p": drop_p,
                 "recoverable_verdicts": rec,
-                "false_recoverable_count": fr,
-                "false_recoverable_rate": round(fr / max(1, rec), 4),
+                "verdict_disagreement_count": fr,
+                "verdict_disagreement_rate": round(fr / max(1, rec), 4),
                 "false_recoverable_count_strict": sum(t["fr_count_strict"] for t in trials),
+            "unsafe_plan_count": sum(t["unsafe_plans"] for t in trials),
+            "unsafe_plan_rate": round(
+                sum(t["unsafe_plans"] for t in trials)
+                / max(1, sum(t["recoverable"] for t in trials)), 5),
                 "unsound_target_count": sum(t["unsound"] for t in trials),
             })
             print(f"  merges={n_merges:>3}  recoverable={rec:>5}  "
-                  f"FR={fr:>4} ({rows[-1]['false_recoverable_rate']:.4f})  "
-                  f"FR_strict={rows[-1]['false_recoverable_count_strict']}  "
+                  f"disagree={fr:>4} ({rows[-1]['verdict_disagreement_rate']:.4f})  "
+                  f"UNSAFE={rows[-1]['unsafe_plan_count']}  "
                   f"unsound={rows[-1]['unsound_target_count']}")
     finally:
         gd.N_MERGES = original

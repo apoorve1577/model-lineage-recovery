@@ -52,6 +52,35 @@ def evaluate_graphs(true_graph, tracked_graph):
             and true_status.get(p["model"]) == "recoverable_by_rollback"
         ]
 
+        # Validate each PROPOSED plan directly against true dependencies.
+        #
+        # This is the quantity the paper cares about, and it is NOT the same as
+        # comparing the tracked planner's verdict to the true planner's. The
+        # two planners select targets independently, so an added edge can make
+        # the true planner pick a different, nearer target whose plan happens
+        # to be blocked; that says nothing about whether the plan actually
+        # proposed reuses a compromised input. Walk the submitted path instead,
+        # treating nodes the plan has already rebuilt as repaired, and ask
+        # whether any TRUE parent of a rebuilt node is compromised and left
+        # unrepaired. That is the mechanism "reintroduces the compromise"
+        # names.
+        unsafe_plans = []
+        for pl in plans:
+            if pl["status"] != "recoverable_by_rollback" or not pl["rebuild_steps"]:
+                continue
+            rebuilt, bad = set(), False
+            for step in pl["rebuild_steps"]:
+                a, rest = step.split(" --", 1)
+                _, b = rest.split("--> ")
+                a, b = a.strip(), b.strip()
+                rebuilt.add(a)
+                for par in true_graph.predecessors(b):
+                    if par in true_affected and par not in rebuilt:
+                        bad = True
+                rebuilt.add(b)
+            if bad:
+                unsafe_plans.append(pl["model"])
+
         # The symmetric error, and the more dangerous one. The tracked graph
         # says a model can be rolled back; the truth is that it cannot, because
         # an edge that would have revealed a compromised merge parent, or the
@@ -108,6 +137,8 @@ def evaluate_graphs(true_graph, tracked_graph):
             "false_unrecoverable_count": len(false_unrecoverable),
             "false_recoverable": false_recoverable,
             "false_recoverable_count": len(false_recoverable),
+            "unsafe_plan_count": len(unsafe_plans),
+            "unsafe_plans": unsafe_plans,
             "false_recoverable_count_strict": len(false_recoverable_strict),
             "strict_blocked_relaxable_count": len(strict_blocked_relaxable),
             "strict_blocked_total": sum(
@@ -149,6 +180,7 @@ def summarize(results):
         "recovery_by_pz_position": {k: dict(v) for k, v in by_position.items()},
         "total_false_unrecoverable": sum(r["false_unrecoverable_count"] for r in results),
         "total_false_recoverable": sum(r["false_recoverable_count"] for r in results),
+        "total_unsafe_plans": sum(r["unsafe_plan_count"] for r in results),
         "total_false_recoverable_strict": sum(
             r["false_recoverable_count_strict"] for r in results),
         "total_unsound_targets": sum(r["unsound_target_count"] for r in results),

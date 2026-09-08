@@ -8,7 +8,7 @@
       "total_false_positives": 0,
       "false_unrecoverable_count": 0,
       "false_unrecoverable_rate_pooled": 0.0,
-      "verdicts": 13557,
+      "verdicts": 13435,
       "by_pz_position": {
         "root": {
           "fu_count": 0,
@@ -17,27 +17,29 @@
         },
         "mid-chain": {
           "fu_count": 0,
-          "verdicts": 4115,
+          "verdicts": 3993,
           "fu_rate": 0.0
         }
       },
-      "recoverable_verdicts": 3538,
-      "false_recoverable_count": 0,
-      "false_recoverable_rate": 0.0,
+      "recoverable_verdicts": 3499,
+      "verdict_disagreement_count": 0,
+      "verdict_disagreement_rate": 0.0,
       "false_recoverable_count_strict": 0,
-      "strict_blocked_total": 4511,
-      "strict_blocked_relaxable": 46,
+      "unsafe_plan_count": 0,
+      "unsafe_plan_rate": 0.0,
+      "strict_blocked_total": 4420,
+      "strict_blocked_relaxable": 38,
       "unsound_target_count": 0
     },
     {
       "drop_p": 0.05,
       "n_trials": 300,
-      "recall_mean": 0.9039,
-      "recall_ci95_halfwidth": 0.0102,
+      "recall_mean": 0.903,
+      "recall_ci95_halfwidth": 0.0105,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 199,
-      "false_unrecoverable_rate_pooled": 0.0165,
-      "verdicts": 12032,
+      "false_unrecoverable_count": 179,
+      "false_unrecoverable_rate_pooled": 0.015,
+      "verdicts": 11914,
       "by_pz_position": {
         "root": {
           "fu_count": 0,
@@ -45,28 +47,30 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 199,
-          "verdicts": 3777,
-          "fu_rate": 0.0527
+          "fu_count": 179,
+          "verdicts": 3659,
+          "fu_rate": 0.0489
         }
       },
-      "recoverable_verdicts": 3107,
-      "false_recoverable_count": 44,
-      "false_recoverable_rate": 0.0142,
+      "recoverable_verdicts": 3070,
+      "verdict_disagreement_count": 38,
+      "verdict_disagreement_rate": 0.0124,
       "false_recoverable_count_strict": 0,
-      "strict_blocked_total": 3769,
-      "strict_blocked_relaxable": 79,
+      "unsafe_plan_count": 0,
+      "unsafe_plan_rate": 0.0,
+      "strict_blocked_total": 3692,
+      "strict_blocked_relaxable": 65,
       "unsound_target_count": 0
     },
     {
       "drop_p": 0.1,
       "n_trials": 300,
-      "recall_mean": 0.822,
-      "recall_ci95_halfwidth": 0.0128,
+      "recall_mean": 0.818,
+      "recall_ci95_halfwidth": 0.013,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 295,
-      "false_unrecoverable_rate_pooled": 0.0274,
-      "verdicts": 10750,
+      "false_unrecoverable_count": 259,
+      "false_unrecoverable_rate_pooled": 0.0244,
+      "verdicts": 10616,
       "by_pz_position": {
         "root": {
           "fu_count": 0,
@@ -74,28 +78,30 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 295,
-          "verdicts": 3463,
-          "fu_rate": 0.0852
+          "fu_count": 259,
+          "verdicts": 3329,
+          "fu_rate": 0.0778
         }
       },
-      "recoverable_verdicts": 2751,
-      "false_recoverable_count": 50,
-      "false_recoverable_rate": 0.0182,
+      "recoverable_verdicts": 2717,
+      "verdict_disagreement_count": 54,
+      "verdict_disagreement_rate": 0.0199,
       "false_recoverable_count_strict": 0,
-      "strict_blocked_total": 3179,
-      "strict_blocked_relaxable": 78,
+      "unsafe_plan_count": 0,
+      "unsafe_plan_rate": 0.0,
+      "strict_blocked_total": 3113,
+      "strict_blocked_relaxable": 79,
       "unsound_target_count": 0
     },
     {
       "drop_p": 0.15,
       "n_trials": 300,
-      "recall_mean": 0.7341,
-      "recall_ci95_halfwidth": 0.0152,
+      "recall_mean": 0.7337,
+      "recall_ci95_halfwidth": 0.0153,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 437,
-      "false_unrecoverable_rate_pooled": 0.0466,
-      "verdicts": 9372,
+      "false_unrecoverable_count": 408,
+      "false_unrecoverable_rate_pooled": 0.0439,
+      "verdicts": 9297,
       "by_pz_position": {
         "root": {
           "fu_count": 0,
@@ -103,28 +109,30 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 437,
-          "verdicts": 3151,
-          "fu_rate": 0.1387
+          "fu_count": 408,
+          "verdicts": 3076,
+          "fu_rate": 0.1326
         }
       },
-      "recoverable_verdicts": 2382,
-      "false_recoverable_count": 73,
-      "false_recoverable_rate": 0.0306,
+      "recoverable_verdicts": 2361,
+      "verdict_disagreement_count": 57,
+      "verdict_disagreement_rate": 0.0241,
       "false_recoverable_count_strict": 0,
-      "strict_blocked_total": 2584,
-      "strict_blocked_relaxable": 97,
+      "unsafe_plan_count": 0,
+      "unsafe_plan_rate": 0.0,
+      "strict_blocked_total": 2539,
+      "strict_blocked_relaxable": 80,
       "unsound_target_count": 0
     },
     {
       "drop_p": 0.2,
       "n_trials": 300,
-      "recall_mean": 0.6565,
-      "recall_ci95_halfwidth": 0.0162,
+      "recall_mean": 0.655,
+      "recall_ci95_halfwidth": 0.016,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 518,
-      "false_unrecoverable_rate_pooled": 0.0634,
-      "verdicts": 8169,
+      "false_unrecoverable_count": 491,
+      "false_unrecoverable_rate_pooled": 0.0607,
+      "verdicts": 8091,
       "by_pz_position": {
         "root": {
           "fu_count": 0,
@@ -132,28 +140,30 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 518,
-          "verdicts": 2836,
-          "fu_rate": 0.1827
+          "fu_count": 491,
+          "verdicts": 2758,
+          "fu_rate": 0.178
         }
       },
-      "recoverable_verdicts": 2031,
-      "false_recoverable_count": 83,
-      "false_recoverable_rate": 0.0409,
+      "recoverable_verdicts": 2001,
+      "verdict_disagreement_count": 69,
+      "verdict_disagreement_rate": 0.0345,
       "false_recoverable_count_strict": 0,
-      "strict_blocked_total": 2111,
-      "strict_blocked_relaxable": 106,
+      "unsafe_plan_count": 1,
+      "unsafe_plan_rate": 0.0005,
+      "strict_blocked_total": 2078,
+      "strict_blocked_relaxable": 90,
       "unsound_target_count": 0
     },
     {
       "drop_p": 0.25,
       "n_trials": 300,
-      "recall_mean": 0.5917,
+      "recall_mean": 0.5903,
       "recall_ci95_halfwidth": 0.016,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 581,
-      "false_unrecoverable_rate_pooled": 0.0807,
-      "verdicts": 7199,
+      "false_unrecoverable_count": 527,
+      "false_unrecoverable_rate_pooled": 0.074,
+      "verdicts": 7123,
       "by_pz_position": {
         "root": {
           "fu_count": 0,
@@ -161,28 +171,30 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 581,
-          "verdicts": 2573,
-          "fu_rate": 0.2258
+          "fu_count": 527,
+          "verdicts": 2497,
+          "fu_rate": 0.2111
         }
       },
-      "recoverable_verdicts": 1737,
-      "false_recoverable_count": 84,
-      "false_recoverable_rate": 0.0484,
+      "recoverable_verdicts": 1746,
+      "verdict_disagreement_count": 76,
+      "verdict_disagreement_rate": 0.0435,
       "false_recoverable_count_strict": 0,
-      "strict_blocked_total": 1741,
-      "strict_blocked_relaxable": 107,
+      "unsafe_plan_count": 1,
+      "unsafe_plan_rate": 0.00057,
+      "strict_blocked_total": 1710,
+      "strict_blocked_relaxable": 97,
       "unsound_target_count": 0
     },
     {
       "drop_p": 0.3,
       "n_trials": 300,
-      "recall_mean": 0.5243,
+      "recall_mean": 0.5249,
       "recall_ci95_halfwidth": 0.0153,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 589,
-      "false_unrecoverable_rate_pooled": 0.0955,
-      "verdicts": 6166,
+      "false_unrecoverable_count": 547,
+      "false_unrecoverable_rate_pooled": 0.0894,
+      "verdicts": 6119,
       "by_pz_position": {
         "root": {
           "fu_count": 0,
@@ -190,28 +202,30 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 589,
-          "verdicts": 2285,
-          "fu_rate": 0.2578
+          "fu_count": 547,
+          "verdicts": 2238,
+          "fu_rate": 0.2444
         }
       },
-      "recoverable_verdicts": 1476,
-      "false_recoverable_count": 74,
-      "false_recoverable_rate": 0.0501,
+      "recoverable_verdicts": 1492,
+      "verdict_disagreement_count": 67,
+      "verdict_disagreement_rate": 0.0449,
       "false_recoverable_count_strict": 0,
-      "strict_blocked_total": 1401,
-      "strict_blocked_relaxable": 92,
+      "unsafe_plan_count": 1,
+      "unsafe_plan_rate": 0.00067,
+      "strict_blocked_total": 1386,
+      "strict_blocked_relaxable": 86,
       "unsound_target_count": 0
     },
     {
       "drop_p": 0.4,
       "n_trials": 300,
-      "recall_mean": 0.4243,
-      "recall_ci95_halfwidth": 0.0139,
+      "recall_mean": 0.4295,
+      "recall_ci95_halfwidth": 0.0148,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 637,
-      "false_unrecoverable_rate_pooled": 0.1368,
-      "verdicts": 4655,
+      "false_unrecoverable_count": 606,
+      "false_unrecoverable_rate_pooled": 0.1304,
+      "verdicts": 4647,
       "by_pz_position": {
         "root": {
           "fu_count": 0,
@@ -219,28 +233,30 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 637,
-          "verdicts": 1816,
-          "fu_rate": 0.3508
+          "fu_count": 606,
+          "verdicts": 1808,
+          "fu_rate": 0.3352
         }
       },
-      "recoverable_verdicts": 1025,
-      "false_recoverable_count": 67,
-      "false_recoverable_rate": 0.0654,
+      "recoverable_verdicts": 1047,
+      "verdict_disagreement_count": 55,
+      "verdict_disagreement_rate": 0.0525,
       "false_recoverable_count_strict": 0,
-      "strict_blocked_total": 857,
-      "strict_blocked_relaxable": 74,
+      "unsafe_plan_count": 1,
+      "unsafe_plan_rate": 0.00096,
+      "strict_blocked_total": 848,
+      "strict_blocked_relaxable": 61,
       "unsound_target_count": 0
     },
     {
       "drop_p": 0.5,
       "n_trials": 300,
-      "recall_mean": 0.3441,
-      "recall_ci95_halfwidth": 0.0131,
+      "recall_mean": 0.3443,
+      "recall_ci95_halfwidth": 0.0134,
       "total_false_positives": 0,
-      "false_unrecoverable_count": 656,
-      "false_unrecoverable_rate_pooled": 0.1928,
-      "verdicts": 3402,
+      "false_unrecoverable_count": 592,
+      "false_unrecoverable_rate_pooled": 0.1772,
+      "verdicts": 3340,
       "by_pz_position": {
         "root": {
           "fu_count": 0,
@@ -248,34 +264,36 @@
           "fu_rate": 0.0
         },
         "mid-chain": {
-          "fu_count": 656,
-          "verdicts": 1456,
-          "fu_rate": 0.4505
+          "fu_count": 592,
+          "verdicts": 1394,
+          "fu_rate": 0.4247
         }
       },
-      "recoverable_verdicts": 697,
-      "false_recoverable_count": 53,
-      "false_recoverable_rate": 0.076,
+      "recoverable_verdicts": 704,
+      "verdict_disagreement_count": 45,
+      "verdict_disagreement_rate": 0.0639,
       "false_recoverable_count_strict": 0,
-      "strict_blocked_total": 556,
-      "strict_blocked_relaxable": 57,
+      "unsafe_plan_count": 1,
+      "unsafe_plan_rate": 0.00142,
+      "strict_blocked_total": 552,
+      "strict_blocked_relaxable": 47,
       "unsound_target_count": 0
     }
   ],
   "slopes": {
     "rate": {
-      "slope": 1.2683,
+      "slope": 1.2958,
       "ci95": [
-        1.1162,
-        1.4612
+        1.1227,
+        1.5132
       ],
       "n_bootstrap": 2000
     },
     "count": {
-      "slope": 0.6589,
+      "slope": 0.6829,
       "ci95": [
-        0.5158,
-        0.8425
+        0.5185,
+        0.8819
       ],
       "n_bootstrap": 2000
     }
@@ -284,46 +302,54 @@
     {
       "edge_type": "fine-tune",
       "n_edges_perturbed": 6166,
-      "mean_models_lost_per_missing_edge": 1.1469,
-      "ci95_halfwidth": 0.0519,
-      "fraction_costing_nothing": 0.5102,
-      "conditional_mean_given_nonzero": 2.3417,
-      "conditional_ci95_halfwidth": 0.0877,
+      "mean_models_lost_per_missing_edge": 1.1356,
+      "ci95_halfwidth": 0.0517,
+      "fraction_costing_nothing": 0.5122,
+      "conditional_mean_given_nonzero": 2.3278,
+      "conditional_ci95_halfwidth": 0.0878,
       "conditional_median_given_nonzero": 1,
-      "single_parent": true
+      "single_parent": true,
+      "zero_because_parent_unexposed": 3158,
+      "zero_despite_exposed_parent": 0
     },
     {
       "edge_type": "quantize",
       "n_edges_perturbed": 2697,
-      "mean_models_lost_per_missing_edge": 1.0682,
-      "ci95_halfwidth": 0.0702,
-      "fraction_costing_nothing": 0.5254,
-      "conditional_mean_given_nonzero": 2.2508,
-      "conditional_ci95_halfwidth": 0.1178,
+      "mean_models_lost_per_missing_edge": 1.0764,
+      "ci95_halfwidth": 0.0699,
+      "fraction_costing_nothing": 0.5195,
+      "conditional_mean_given_nonzero": 2.24,
+      "conditional_ci95_halfwidth": 0.1158,
       "conditional_median_given_nonzero": 1,
-      "single_parent": true
+      "single_parent": true,
+      "zero_because_parent_unexposed": 1401,
+      "zero_despite_exposed_parent": 0
     },
     {
       "edge_type": "merge",
       "n_edges_perturbed": 1440,
-      "mean_models_lost_per_missing_edge": 1.3674,
-      "ci95_halfwidth": 0.1509,
-      "fraction_costing_nothing": 0.6993,
-      "conditional_mean_given_nonzero": 4.5473,
-      "conditional_ci95_halfwidth": 0.3516,
+      "mean_models_lost_per_missing_edge": 1.3382,
+      "ci95_halfwidth": 0.1503,
+      "fraction_costing_nothing": 0.7042,
+      "conditional_mean_given_nonzero": 4.5235,
+      "conditional_ci95_halfwidth": 0.3581,
       "conditional_median_given_nonzero": 3,
-      "single_parent": false
+      "single_parent": false,
+      "zero_because_parent_unexposed": 935,
+      "zero_despite_exposed_parent": 79
     },
     {
       "edge_type": "compose",
       "n_edges_perturbed": 600,
-      "mean_models_lost_per_missing_edge": 1.4067,
-      "ci95_halfwidth": 0.2317,
-      "fraction_costing_nothing": 0.6717,
-      "conditional_mean_given_nonzero": 4.2843,
-      "conditional_ci95_halfwidth": 0.5078,
+      "mean_models_lost_per_missing_edge": 1.4417,
+      "ci95_halfwidth": 0.2322,
+      "fraction_costing_nothing": 0.6633,
+      "conditional_mean_given_nonzero": 4.2822,
+      "conditional_ci95_halfwidth": 0.4947,
       "conditional_median_given_nonzero": 3,
-      "single_parent": true
+      "single_parent": true,
+      "zero_because_parent_unexposed": 398,
+      "zero_despite_exposed_parent": 0
     }
   ],
   "non_uniform_missingness_sweep": [
@@ -336,10 +362,10 @@
         "compose": 0.15
       },
       "mean_actual_untracked_fraction": 0.152,
-      "recall_mean": 0.7341,
-      "recall_ci95_halfwidth": 0.0152,
-      "false_unrecoverable_count": 437,
-      "false_unrecoverable_rate": 0.0466,
+      "recall_mean": 0.7337,
+      "recall_ci95_halfwidth": 0.0153,
+      "false_unrecoverable_count": 408,
+      "false_unrecoverable_rate": 0.0439,
       "total_false_positives": 0
     },
     {
@@ -351,10 +377,10 @@
         "compose": 0.35
       },
       "mean_actual_untracked_fraction": 0.1521,
-      "recall_mean": 0.7323,
+      "recall_mean": 0.7304,
       "recall_ci95_halfwidth": 0.0147,
-      "false_unrecoverable_count": 458,
-      "false_unrecoverable_rate": 0.0489,
+      "false_unrecoverable_count": 378,
+      "false_unrecoverable_rate": 0.0409,
       "total_false_positives": 0
     },
     {
@@ -366,10 +392,10 @@
         "compose": 0.04
       },
       "mean_actual_untracked_fraction": 0.1506,
-      "recall_mean": 0.7211,
-      "recall_ci95_halfwidth": 0.0165,
-      "false_unrecoverable_count": 326,
-      "false_unrecoverable_rate": 0.0355,
+      "recall_mean": 0.7219,
+      "recall_ci95_halfwidth": 0.0171,
+      "false_unrecoverable_count": 344,
+      "false_unrecoverable_rate": 0.0378,
       "total_false_positives": 0
     },
     {
@@ -381,10 +407,10 @@
         "compose": 0.8
       },
       "mean_actual_untracked_fraction": 0.1525,
-      "recall_mean": 0.719,
-      "recall_ci95_halfwidth": 0.0153,
-      "false_unrecoverable_count": 589,
-      "false_unrecoverable_rate": 0.0645,
+      "recall_mean": 0.7131,
+      "recall_ci95_halfwidth": 0.0151,
+      "false_unrecoverable_count": 275,
+      "false_unrecoverable_rate": 0.0306,
       "total_false_positives": 0
     }
   ],
@@ -392,15 +418,15 @@
     {
       "missingness": "benign uniform",
       "mean_actual_untracked_fraction": 0.152,
-      "recall_mean": 0.7341,
-      "recall_ci95_halfwidth": 0.0152,
+      "recall_mean": 0.7337,
+      "recall_ci95_halfwidth": 0.0153,
       "total_false_positives": 0
     },
     {
       "missingness": "adversarial",
-      "mean_actual_untracked_fraction": 0.1484,
-      "recall_mean": 0.3379,
-      "recall_ci95_halfwidth": 0.0167,
+      "mean_actual_untracked_fraction": 0.1511,
+      "recall_mean": 0.3245,
+      "recall_ci95_halfwidth": 0.0162,
       "total_false_positives": 0
     }
   ],
@@ -409,30 +435,36 @@
       "n_merges": 6,
       "n_trials": 200,
       "drop_p": 0.3,
-      "recoverable_verdicts": 1095,
-      "false_recoverable_count": 51,
-      "false_recoverable_rate": 0.0466,
+      "recoverable_verdicts": 1004,
+      "verdict_disagreement_count": 44,
+      "verdict_disagreement_rate": 0.0438,
       "false_recoverable_count_strict": 0,
+      "unsafe_plan_count": 2,
+      "unsafe_plan_rate": 0.00199,
       "unsound_target_count": 0
     },
     {
       "n_merges": 12,
       "n_trials": 200,
       "drop_p": 0.3,
-      "recoverable_verdicts": 1000,
-      "false_recoverable_count": 81,
-      "false_recoverable_rate": 0.081,
+      "recoverable_verdicts": 993,
+      "verdict_disagreement_count": 65,
+      "verdict_disagreement_rate": 0.0655,
       "false_recoverable_count_strict": 0,
+      "unsafe_plan_count": 2,
+      "unsafe_plan_rate": 0.00201,
       "unsound_target_count": 0
     },
     {
       "n_merges": 20,
       "n_trials": 200,
       "drop_p": 0.3,
-      "recoverable_verdicts": 1043,
-      "false_recoverable_count": 86,
-      "false_recoverable_rate": 0.0825,
+      "recoverable_verdicts": 1025,
+      "verdict_disagreement_count": 104,
+      "verdict_disagreement_rate": 0.1015,
       "false_recoverable_count_strict": 0,
+      "unsafe_plan_count": 0,
+      "unsafe_plan_rate": 0.0,
       "unsound_target_count": 0
     }
   ],

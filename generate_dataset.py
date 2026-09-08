@@ -189,9 +189,21 @@ def assign_patient_zeros(records, rng,
     derivation, so a clean ancestor still exists upstream and rollback is
     actually possible.
 
-    Mid-chain candidates deliberately include merge and compose nodes, not
-    just fine-tunes: a compromise discovered in a merged model, or in an
-    adapter, is a case the recoverability taxonomy has to handle.
+    Mid-chain candidates include merge nodes, since a compromise discovered in
+    a merged model is a case the taxonomy has to handle.
+
+    They deliberately EXCLUDE `compose` nodes. This model represents an adapter
+    as a single node with one parent (its base), which cannot express that a
+    deployment depends on both the base and the adapter. Designating an adapter
+    as patient zero therefore produced plans reading "re-serve the existing
+    adapter against a clean base" -- reusing the very artifact that was
+    compromised. Rather than emit advice the model cannot justify, the
+    evaluation is scoped to base-only incidents: adapters may be contaminated
+    THROUGH a compromised base, which is the case the paper demonstrates, but
+    an independently poisoned adapter is out of scope. Representing that
+    properly needs composition as a two-parent operation with separate
+    deployment nodes, which changes the arity invariant both propositions rest
+    on. It is stated as a limitation rather than silently mishandled.
     """
     roots = [r for r in records.values() if r.operation == "root"]
     for r in rng.sample(roots, min(n_root_pz, len(roots))):
@@ -223,7 +235,7 @@ def assign_patient_zeros(records, rng,
 
     eligible = [
         r for r in records.values()
-        if r.operation != "root" and r.generation >= 1
+        if r.operation not in ("root", "compose") and r.generation >= 1
         and r.id not in contaminated and not r.is_patient_zero
         and descendant_count.get(r.id, 0) >= 2
     ]

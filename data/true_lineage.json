@@ -204,7 +204,7 @@
     ],
     "operation": "compose",
     "signed": true,
-    "is_patient_zero": true,
+    "is_patient_zero": false,
     "generation": 1
   },
   "fam1-g2-20": {
@@ -226,7 +226,7 @@
     ],
     "operation": "fine-tune",
     "signed": true,
-    "is_patient_zero": false,
+    "is_patient_zero": true,
     "generation": 2
   },
   "fam2-g2-22": {
@@ -369,7 +369,7 @@
     ],
     "operation": "quantize",
     "signed": true,
-    "is_patient_zero": true,
+    "is_patient_zero": false,
     "generation": 2
   },
   "fam2-g2-35": {
@@ -402,7 +402,7 @@
     ],
     "operation": "fine-tune",
     "signed": true,
-    "is_patient_zero": false,
+    "is_patient_zero": true,
     "generation": 2
   },
   "fam5-g2-38": {

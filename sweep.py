@@ -453,6 +453,11 @@ if __name__ == "__main__":
           "(these test the experiment, not the system)\n")
     for k, v in checks.items():
         print(f"  {'PASS' if v else 'FAIL'}  {k}")
+    # Actually assert. Printing FAIL and exiting zero means a broken harness
+    # produces results that look fine.
+    failed = [k for k, v in checks.items() if not v]
+    if failed:
+        raise SystemExit(f"\nHARNESS ASSERTION FAILED: {failed}")
 
     with open("results/sweep.json", "w") as f:
         json.dump({"drop_rate_sweep": drop_rows,

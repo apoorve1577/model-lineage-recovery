@@ -6,18 +6,20 @@ Reference implementation for the paper *Beyond Detection: A Recovery-Oriented
 Architecture for Compromised AI Model Remediation* (preprint in preparation).
 
 Existing AI supply chain tooling verifies a model artifact at the moment you
-adopt it. Signing answers *"is this artifact what it claims to be."* It cannot
-answer *"what else is affected, and what do I do about it,"* because
-contamination is a relationship between artifacts and a signature is a property
-of one artifact in isolation.
+adopt it. Signing answers *"is this artifact what it claims to be."* It does not
+answer *"what else is affected, and what do I do about it."* Signed provenance
+formats can carry derivation relationships, and SLSA and in-toto already do;
+what verification at adoption time does not provide is the collection, the
+index, or any account of the answer's quality when the record is incomplete.
 
 This prototype addresses what happens afterwards: when a model or dataset is
 discovered to be compromised months later, which downstream models are affected,
 and what can actually be done about each one.
 
 > **Motivating case.** In December 2023 the Stanford Internet Observatory found
-> validated CSAM in LAION-5B and recommended that models trained on it be
-> withdrawn. That recommendation was largely unactionable: no queryable graph
+> validated CSAM in LAION-5B and recommended that Stable Diffusion 1.5 models
+> without safety measures applied be deprecated and their distribution ceased
+> where feasible. That recommendation was largely unactionable: no queryable graph
 > connected the dataset to its derivatives. The query was never the hard part.
 > The graph did not exist.
 ## What it does
@@ -76,7 +78,7 @@ verdicts.
 **A conservative setting makes it provable rather than merely observed.**
 `recovery_plan(..., strict=True)` also treats the rebuild path's own parent as
 blocking, under which a `recoverable` verdict is provably correct. It costs
-precision: 3.8% of its `blocked` verdicts have every off-path parent clean.
+precision: 3.2% of its `blocked` verdicts have every off-path parent clean.
 The precise rule gives that guarantee up and turns out to be safe anyway on
 these graphs.
 

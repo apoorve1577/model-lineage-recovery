@@ -81,7 +81,8 @@ def evaluate_graphs(true_graph, tracked_graph):
             if bad:
                 unsafe_plans.append(pl["model"])
 
-        # The symmetric error, and the more dangerous one. The tracked graph
+        # Disagreement with a full-graph planner's independently selected
+        # plan. NOT an unsafety measure: unsafe_plans above is that. The tracked graph
         # says a model can be rolled back; the truth is that it cannot, because
         # an edge that would have revealed a compromised merge parent, or the
         # compromise of the target itself, was never recorded. Acting on this
@@ -99,6 +100,12 @@ def evaluate_graphs(true_graph, tracked_graph):
         # asserted.
         strict_plans = recovery_plan(tracked_graph, pz, tracked_affected, strict=True)
         strict_status = {p["model"]: p["status"] for p in strict_plans}
+        # Proposition 2 compares the conservative rule against ITSELF on the
+        # true graph. Comparing it against precise-rule true statuses tests a
+        # different and weaker statement.
+        strict_true_status = {
+            p["model"]: p["status"]
+            for p in recovery_plan(true_graph, pz, true_affected, strict=True)}
         strict_blocked_relaxable = [
             m for m, st in strict_status.items()
             if st == "blocked_on_compromised_merge_parent"
@@ -108,7 +115,7 @@ def evaluate_graphs(true_graph, tracked_graph):
         false_recoverable_strict = [
             p["model"] for p in strict_plans
             if p["status"] == "recoverable_by_rollback"
-            and true_status.get(p["model"]) in (
+            and strict_true_status.get(p["model"]) in (
                 "unrecoverable_by_rollback", "blocked_on_compromised_merge_parent")
         ]
 

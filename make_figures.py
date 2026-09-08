@@ -155,6 +155,9 @@ if __name__ == "__main__":
     os.makedirs("figures", exist_ok=True)
     fig_degradation()
     fig_criticality()
+    # PNGs for the README, from the same call as the PDFs so they cannot drift.
+    fig_degradation("figures/degradation.png")
+    fig_criticality("figures/criticality.png")
     with open("figures/plotted.json", "w") as f:
         json.dump(PLOTTED, f, indent=2)
     print("wrote figures/plotted.json")

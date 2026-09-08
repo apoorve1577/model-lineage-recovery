@@ -1,4 +1,12 @@
 {
+  "totals": {
+    "recoverable_verdicts_all_levels": 18637,
+    "recoverable_verdicts_nonzero_levels": 15138,
+    "recoverable_verdicts_stress": 3022,
+    "unsafe_plans_all_levels": 5,
+    "unsafe_plans_stress": 4,
+    "recoverable_verdicts_nonzero_plus_stress": 18160
+  },
   "drop_rate_sweep": [
     {
       "drop_p": 0.0,

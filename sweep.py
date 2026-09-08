@@ -462,7 +462,29 @@ if __name__ == "__main__":
         raise SystemExit(f"\nHARNESS ASSERTION FAILED: {failed}")
 
     with open("results/sweep.json", "w") as f:
-        json.dump({"drop_rate_sweep": drop_rows,
+        # Denominators the paper quotes, stored rather than left to be summed
+        # by hand. A hand-summed figure gets whitelisted in a checker instead
+        # of computed, which is how "roughly 21,000" reached the abstract.
+        # p=0 is excluded from the nonzero total: there the tracked graph IS
+        # the true graph, so an unsafe plan is impossible and those verdicts
+        # only pad the denominator.
+        totals = {
+            "recoverable_verdicts_all_levels":
+                sum(r["recoverable_verdicts"] for r in drop_rows),
+            "recoverable_verdicts_nonzero_levels":
+                sum(r["recoverable_verdicts"] for r in drop_rows if r["drop_p"] > 0),
+            "recoverable_verdicts_stress":
+                sum(r["recoverable_verdicts"] for r in stress_rows),
+            "unsafe_plans_all_levels":
+                sum(r["unsafe_plan_count"] for r in drop_rows),
+            "unsafe_plans_stress":
+                sum(r["unsafe_plan_count"] for r in stress_rows),
+        }
+        totals["recoverable_verdicts_nonzero_plus_stress"] = (
+            totals["recoverable_verdicts_nonzero_levels"]
+            + totals["recoverable_verdicts_stress"])
+        json.dump({"totals": totals,
+                   "drop_rate_sweep": drop_rows,
                    "slopes": slopes,
                    "edge_criticality": criticality_rows,
                    "non_uniform_missingness_sweep": scenario_rows,

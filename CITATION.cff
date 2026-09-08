@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: >-
+  Blast Radius and Recovery for Compromised AI Model Lineage
+message: >-
+  If you use this software or its results, please cite it. A preprint of the
+  accompanying paper is in preparation.
+type: software
+authors:
+  - given-names: Apoorve
+    family-names: Bhargava
+    email: apoorve1577@gmail.com
+repository-code: "https://github.com/apoorve1577/model-lineage-recovery"
+license: Apache-2.0
+abstract: >-
+  Reference implementation for "Beyond Detection: A Recovery-Oriented
+  Architecture for Compromised AI Model Remediation". Implements a typed
+  lineage DAG over model artifacts, a blast-radius query with a proven
+  soundness property, and a recovery planner that classifies each affected
+  artifact by whether rollback to a clean signed ancestor is available.
+  Evaluated by running queries against an incompletely recorded graph and
+  scoring them against ground truth they never see.
+keywords:
+  - AI supply chain security
+  - model provenance
+  - blast radius
+  - incident response
+  - software supply chain

@@ -54,6 +54,10 @@ condition, 95% confidence intervals, ~11 seconds end to end.
 | 30% | 0.524 ± 0.015 | 588 | 0.095 | 0.257 |
 | 50% | 0.344 ± 0.013 | 649 | 0.191 | 0.446 |
 
+![Recall and falsely-unrecoverable verdicts against the fraction of unrecorded lineage edges](figures/degradation.png)
+
+![Marginal cost of one missing edge, by derivation type](figures/criticality.png)
+
 ### The findings
 
 **Plan soundness.** Any rollback target the planner proposes lies outside the

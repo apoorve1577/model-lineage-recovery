@@ -80,9 +80,12 @@ verdicts.
 `recovery_plan(..., strict=True)` also treats the rebuild path's own parent as
 blocking, under which a `recoverable` verdict is provably correct. It costs
 precision: 3.2% of its `blocked` verdicts have every off-path parent clean.
-Giving the guarantee up admits additional plans: 47 to 97 extra recoverable
-verdicts per condition, of which one per condition reused an unrepaired
-affected input. Small, but not zero.
+Giving the guarantee up admits additional plans, and a few of them are unsafe.
+Across the main sweep's nonzero conditions that population runs 47 to 97, with
+exactly one unsafe verdict at each of 20%, 25%, 30%, 40% and 50% and none
+below: an observed 0 to 2.13%. The denser stress runs have their own
+populations of 51, 80 and 139 with 2, 2 and 0 unsafe, or 0 to 3.92%. The two
+must not be pooled.
 
 **Rollback targets are always safe, under either setting.** Whatever the
 planner proposes as a rollback target lies outside the *true* blast radius,

@@ -248,6 +248,16 @@ def run_drop_sweep():
                 / max(1, sum(t["recoverable"] for t in trials)), 5),
             "strict_blocked_total": sum(t["strict_blocked"] for t in trials),
             "strict_blocked_relaxable": sum(t["strict_relaxable"] for t in trials),
+            # Same quantity under the name the paper uses for it: the plans the
+            # precise rule admits and the conservative rule does not. This is
+            # the denominator for what giving up the guarantee costs, and it is
+            # NOT comparable across experiments, so the stress rows carry their
+            # own.
+            "precise_only_verdicts": sum(t["strict_relaxable"] for t in trials),
+            "unsafe_rate_of_precise_only": (
+                round(sum(t["unsafe_plans"] for t in trials)
+                      / sum(t["strict_relaxable"] for t in trials), 5)
+                if sum(t["strict_relaxable"] for t in trials) else 0.0),
             "unsound_target_count": sum(t["unsound"] for t in trials),
         })
         r = rows[-1]
@@ -392,6 +402,7 @@ def run_stress(n_trials=200, drop_p=0.30):
                       for i in range(n_trials)]
             rec = sum(t["recoverable"] for t in trials)
             fr = sum(t["fr_count"] for t in trials)
+            precise_only = sum(t["strict_relaxable"] for t in trials)
             rows.append({
                 "n_merges": n_merges,
                 "n_trials": n_trials,
@@ -400,10 +411,16 @@ def run_stress(n_trials=200, drop_p=0.30):
                 "verdict_disagreement_count": fr,
                 "verdict_disagreement_rate": round(fr / max(1, rec), 4),
                 "false_recoverable_count_strict": sum(t["fr_count_strict"] for t in trials),
-            "unsafe_plan_count": sum(t["unsafe_plans"] for t in trials),
-            "unsafe_plan_rate": round(
-                sum(t["unsafe_plans"] for t in trials)
-                / max(1, sum(t["recoverable"] for t in trials)), 5),
+                "unsafe_plan_count": sum(t["unsafe_plans"] for t in trials),
+                # The population the precise rule admits and the conservative
+                # rule does not: the denominator for any claim about what
+                # giving up the guarantee costs. It differs between this
+                # experiment and the main sweep, so it is stored per condition
+                # rather than left to be quoted from the other one.
+                "precise_only_verdicts": precise_only,
+                "unsafe_rate_of_precise_only": (
+                    round(sum(t["unsafe_plans"] for t in trials) / precise_only, 5)
+                    if precise_only else 0.0),
                 "unsound_target_count": sum(t["unsound"] for t in trials),
             })
             print(f"  merges={n_merges:>3}  recoverable={rec:>5}  "

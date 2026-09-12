@@ -3,7 +3,8 @@
 **License:** Apache-2.0 · **Status:** research prototype · **Reproduces in ~13s**
 
 Reference implementation for the paper *Beyond Detection: A Recovery-Oriented
-Architecture for Compromised AI Model Remediation* (preprint in preparation).
+Architecture for Compromised AI Model Remediation*
+([10.5281/zenodo.22729426](https://doi.org/10.5281/zenodo.22729426)).
 
 Existing AI supply chain tooling verifies a model artifact at the moment you
 adopt it. Signing answers *"is this artifact what it claims to be."* It does not
@@ -209,12 +210,13 @@ is out of scope.
 
 ## Citing
 
-A preprint is in preparation. Until it is posted, please cite this repository:
+```
+Bhargava, A. (2026). Beyond Detection: A Recovery-Oriented Architecture for
+Compromised AI Model Remediation. Zenodo. https://doi.org/10.5281/zenodo.22729426
+```
 
-```
-Bhargava, A. Blast Radius and Recovery for Compromised AI Model Lineage.
-https://github.com/apoorve1577/model-lineage-recovery
-```
+That is the concept DOI, which always resolves to the latest version. To cite
+this specific version, use 10.5281/zenodo.22729427.
 
 ## License
 

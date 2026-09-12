@@ -2,8 +2,25 @@ cff-version: 1.2.0
 title: >-
   Blast Radius and Recovery for Compromised AI Model Lineage
 message: >-
-  If you use this software or its results, please cite it. A preprint of the
-  accompanying paper is in preparation.
+  If you use this software or its results, please cite the accompanying paper.
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.22729426
+    description: >-
+      Concept DOI for the accompanying preprint; always resolves to the latest
+      version.
+preferred-citation:
+  type: article
+  title: >-
+    Beyond Detection: A Recovery-Oriented Architecture for Compromised AI Model
+    Remediation
+  authors:
+    - given-names: Apoorve
+      family-names: Bhargava
+      email: apoorve1577@gmail.com
+  year: 2026
+  doi: 10.5281/zenodo.22729426
+  url: "https://doi.org/10.5281/zenodo.22729426"
 type: software
 authors:
   - given-names: Apoorve
